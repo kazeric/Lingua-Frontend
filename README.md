@@ -1,6 +1,6 @@
 # 🌍 Lingo_Connect – Language Translation for Low-Resource Communities
 
-**Lingo_Connect** is a modern, interactive web app designed to bridge language gaps between field officers and farmers in rural settings. Built with React and Tailwind CSS, it leverages Machine Translation, ASR (Automatic Speech Recognition), and TTS (Text-to-Speech) to enable real-time multilingual communication — starting with English ↔ Giriama.
+**Lingo_Connect** is a modern, interactive web app designed to bridge language gaps between field officers and farmers in rural settings. Built with Nextjs, React and Tailwind CSS, it leverages Machine Translation, ASR (Automatic Speech Recognition), and TTS (Text-to-Speech) to enable real-time multilingual communication — starting with English ↔ Giriama.
 
 ![Lingo_Connect Banner](banner-image-url) <!-- Optional image or illustration -->
 
@@ -20,7 +20,7 @@
 
 ## 🖥️ Tech Stack
 
-- **Frontend**: React.js, Tailwind CSS, Framer Motion
+- **Frontend**: Next.js, React.js, Tailwind CSS, Framer Motion
 - **Deployment**: Vercel / Netlify
 - **APIs** (to be integrated):
   - Automatic Speech Recognition (ASR)
