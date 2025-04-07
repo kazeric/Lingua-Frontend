@@ -5,8 +5,8 @@ import {
   Database, 
   Users, 
   FileSpreadsheet, 
-  VoiceNetwork, 
-  MobileDevice
+  Mic, 
+  Phone
 } from "lucide-react";
 
 const features = [
@@ -35,13 +35,13 @@ const features = [
       "Specialized vocabulary for farming, crop management, irrigation, and sustainable practices.",
   },
   {
-    icon: <VoiceNetwork className="h-8 w-8 text-lingua-500" />,
+    icon: <Mic className="h-8 w-8 text-lingua-500" />,
     title: "Voice Translation",
     description:
       "Speak and hear translations, making knowledge accessible regardless of literacy levels.",
   },
   {
-    icon: <MobileDevice className="h-8 w-8 text-lingua-500" />,
+    icon: <Phone className="h-8 w-8 text-lingua-500" />,
     title: "Offline Capability",
     description:
       "Work without internet connection in remote agricultural areas with downloadable language packs.",

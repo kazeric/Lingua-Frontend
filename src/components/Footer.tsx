@@ -1,6 +1,5 @@
-
 import React from "react";
-import { Globe, Mail, GitHub, MessageSquare } from "lucide-react";
+import { Globe, Mail, Github, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -23,7 +22,7 @@ const Footer = () => {
                 className="p-2 rounded-full bg-muted hover:bg-lingua-100 dark:hover:bg-lingua-900/20 transition-colors"
                 aria-label="GitHub"
               >
-                <GitHub className="h-5 w-5" />
+                <Github className="h-5 w-5" />
               </a>
               <a
                 href="#"
