@@ -1,123 +1,81 @@
 
-import React, { useEffect, useState } from "react";
-import { ArrowRight, Globe, RefreshCw, Wand2 } from "lucide-react";
+import React from "react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
-  const [translateAnimation, setTranslateAnimation] = useState(false);
-  const farmWords = [
-    { en: "harvest", translated: "mavuno" },
-    { en: "crops", translated: "mazao" },
-    { en: "farm", translated: "shamba" },
-    { en: "irrigation", translated: "umwagiliaji" },
-  ];
-  const [currentWordIndex, setCurrentWordIndex] = useState(0);
-
-  useEffect(() => {
-    // Start animation immediately
-    setTranslateAnimation(true);
-
-    // Word animation interval
-    const interval = setInterval(() => {
-      setTranslateAnimation(false);
-      
-      // After animation out, change the word
-      setTimeout(() => {
-        setCurrentWordIndex((prev) => (prev + 1) % farmWords.length);
-        setTranslateAnimation(true);
-      }, 500);
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   return (
-    <section className="pt-28 pb-16 md:pt-32 md:pb-24 overflow-hidden leaf-pattern">
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6 animate-slide-right">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-              Bridging Language Gaps in{" "}
-              <span className="text-lingua-500">Agricultural Data</span>
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-md">
-              Empowering farmers and researchers to collect and share agricultural knowledge
-              across language barriers, especially for low-resource languages.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button
-                className="bg-lingua-500 hover:bg-lingua-600 h-12 px-6 rounded-full text-white font-medium"
-                size="lg"
-              >
-                Start Translating
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                className="h-12 px-6 rounded-full font-medium border-lingua-300"
-                size="lg"
-              >
-                Contribute Data
-              </Button>
-            </div>
-            <div className="flex items-center gap-6 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Globe className="h-5 w-5 text-lingua-500" />
-                <span>25+ Languages</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Wand2 className="h-5 w-5 text-lingua-500" />
-                <span>AI-Powered</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="relative min-h-[320px] bg-gradient-to-br from-lingua-50 to-lingua-100 rounded-2xl p-6 border border-lingua-200 shadow-lg animate-slide-left">
-            <div className="absolute top-6 left-0 right-0 flex justify-center">
-              <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm">
-                <RefreshCw className="h-4 w-4 text-lingua-500 animate-pulse" />
-                <span className="text-sm font-medium text-lingua-700">
-                  Agricultural Translation
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-16 grid grid-cols-2 gap-6">
-              <div className="bg-white/70 backdrop-blur-sm p-4 rounded-lg shadow-sm">
-                <h3 className="text-sm font-medium text-muted-foreground mb-2">
-                  English
-                </h3>
-                <p className={`text-xl font-medium ${translateAnimation ? 'animate-grow' : 'opacity-0'}`}>
-                  {farmWords[currentWordIndex].en}
-                </p>
-              </div>
-
-              <div className="bg-lingua-500/10 backdrop-blur-sm p-4 rounded-lg shadow-sm">
-                <h3 className="text-sm font-medium text-muted-foreground mb-2">
-                  Swahili
-                </h3>
-                <p className={`text-xl font-medium text-lingua-700 ${translateAnimation ? 'animate-grow' : 'opacity-0'}`}>
-                  {farmWords[currentWordIndex].translated}
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-6 flex flex-col gap-3">
-              <div className="bg-white/70 backdrop-blur-sm p-3 rounded-lg shadow-sm w-3/4">
-                <div className="h-3 bg-lingua-100 rounded-full animate-pulse-light"></div>
-              </div>
-              <div className="bg-white/70 backdrop-blur-sm p-3 rounded-lg shadow-sm w-1/2 ml-auto">
-                <div className="h-3 bg-lingua-100 rounded-full animate-pulse-light"></div>
-              </div>
+    <section className="min-h-screen flex items-center justify-center pt-16 leaf-pattern">
+      <div className="container mx-auto px-4 md:px-6 py-12 md:py-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div className="flex flex-col space-y-6 text-left animate-slide-up">
+            <div className="inline-block px-3 py-1 rounded-full bg-lingua-100 text-lingua-700 text-sm font-medium dark:bg-lingua-900/30 dark:text-lingua-300">
+              Bridging the Language Gap in Agriculture
             </div>
             
-            <div className="absolute bottom-6 right-6">
-              <Button
-                size="sm"
-                className="rounded-full h-8 bg-lingua-500/90 hover:bg-lingua-500 text-white"
-              >
-                <ArrowRight className="h-3 w-3" />
-              </Button>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+              Language Translation for <span className="text-lingua-500">Agricultural Data</span>
+            </h1>
+            
+            <p className="text-lg text-muted-foreground max-w-lg">
+              Specialized translation tools to support data collection 
+              and knowledge sharing in low-resource agricultural communities.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+              <Link to="/dashboard">
+                <Button className="bg-lingua-500 hover:bg-lingua-600 text-white px-6 py-6 h-auto text-lg rounded-xl">
+                  Get Started
+                </Button>
+              </Link>
+              <a href="#demo">
+                <Button variant="outline" className="px-6 py-6 h-auto text-lg rounded-xl">
+                  Try Demo
+                </Button>
+              </a>
+            </div>
+          </div>
+          
+          <div className="animate-fade-in">
+            <div className="bg-card shadow-xl rounded-xl border border-border overflow-hidden">
+              <div className="bg-lingua-500 text-white p-3 text-sm flex items-center">
+                <div className="flex space-x-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                </div>
+                <div className="mx-auto font-medium">Translation Live Demo</div>
+              </div>
+              
+              <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <div className="font-medium text-sm text-muted-foreground">English</div>
+                  <div className="p-3 bg-muted/30 rounded-md border border-border">
+                    How to implement sustainable irrigation systems for small farms?
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="font-medium text-sm text-muted-foreground">Kinyarwanda</div>
+                  <div className="p-3 bg-lingua-50 rounded-md border border-lingua-100 dark:bg-lingua-900/10 dark:border-lingua-800">
+                    Ni gute gushyira mu bikorwa uburyo burambye bwo kuhira ku ma ferme mato?
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="font-medium text-sm text-muted-foreground">English</div>
+                  <div className="p-3 bg-muted/30 rounded-md border border-border">
+                    When is the best time to plant drought-resistant maize?
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="font-medium text-sm text-muted-foreground">Luganda</div>
+                  <div className="p-3 bg-lingua-50 rounded-md border border-lingua-100 dark:bg-lingua-900/10 dark:border-lingua-800">
+                    Ddi ekiseera ekisinga obulungi okusimba kasooli agumikiriza ekyeya?
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Menu, X, Globe } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -45,9 +46,11 @@ const Navbar = () => {
             <a href="#contribute" className="link-underline font-medium">
               Contribute
             </a>
-            <Button className="bg-lingua-500 hover:bg-lingua-600 text-white rounded-full">
-              Get Started
-            </Button>
+            <Link to="/dashboard">
+              <Button className="bg-lingua-500 hover:bg-lingua-600 text-white rounded-full">
+                Get Started
+              </Button>
+            </Link>
             <ThemeToggle />
           </nav>
 
@@ -100,9 +103,15 @@ const Navbar = () => {
               >
                 Contribute
               </a>
-              <Button className="bg-lingua-500 hover:bg-lingua-600 text-white w-full">
-                Get Started
-              </Button>
+              <Link 
+                to="/dashboard"
+                className="w-full"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Button className="bg-lingua-500 hover:bg-lingua-600 text-white w-full">
+                  Get Started
+                </Button>
+              </Link>
             </div>
           </nav>
         )}
