@@ -13,29 +13,29 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // Sample of low-resource languages particularly in agricultural regions
 const languages = {
   african: [
+    { code: "en", name: "English" },
     { code: "nyf", name: "Giriama" },
-    { code: "swa", name: "Swahili" },
-    { code: "luo", name: "Luo" },
-    { code: "kam", name: "Kamba" },
-    { code: "maa", name: "Maasai" },
-    { code: "gor", name: "Gusii" },
+    // { code: "luo", name: "Luo" },
+    // { code: "kam", name: "Kamba" },
+    // { code: "maa", name: "Maasai" },
+    // { code: "gor", name: "Gusii" },
   ],
-  asian: [
-    { code: "nep", name: "Nepali" },
-    { code: "sin", name: "Sinhala" },
-    { code: "urd", name: "Urdu" },
-    { code: "khm", name: "Khmer" },
-    { code: "lao", name: "Lao" },
-    { code: "mya", name: "Burmese" },
-  ],
-  pacific: [
-    { code: "haw", name: "Hawaiian" },
-    { code: "sam", name: "Samoan" },
-    { code: "ton", name: "Tongan" },
-    { code: "fij", name: "Fijian" },
-    { code: "mri", name: "Māori" },
-    { code: "tet", name: "Tetum" },
-  ],
+  // asian: [
+  //   { code: "nep", name: "Nepali" },
+  //   { code: "sin", name: "Sinhala" },
+  //   { code: "urd", name: "Urdu" },
+  //   { code: "khm", name: "Khmer" },
+  //   { code: "lao", name: "Lao" },
+  //   { code: "mya", name: "Burmese" },
+  // ],
+  // pacific: [
+  //   { code: "haw", name: "Hawaiian" },
+  //   { code: "sam", name: "Samoan" },
+  //   { code: "ton", name: "Tongan" },
+  //   { code: "fij", name: "Fijian" },
+  //   { code: "mri", name: "Māori" },
+  //   { code: "tet", name: "Tetum" },
+  // ],
 };
 
 const LanguageSelector = () => {
@@ -101,10 +101,10 @@ const LanguageSelector = () => {
           <div className="md:w-1/2 animate-slide-left">
             <div className="bg-card rounded-xl p-6 border border-border shadow-md">
               <Tabs defaultValue="african" className="w-full">
-                <TabsList className="grid grid-cols-3 mb-6">
+                <TabsList className="grid grid mb-6">
                   <TabsTrigger value="african">African</TabsTrigger>
-                  <TabsTrigger value="asian">Asian</TabsTrigger>
-                  <TabsTrigger value="pacific">Pacific</TabsTrigger>
+                  {/* <TabsTrigger value="asian">Asian</TabsTrigger>
+                  <TabsTrigger value="pacific">Pacific</TabsTrigger> */}
                 </TabsList>
                 
                 {Object.entries(languages).map(([region, langs]) => (
