@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { ArrowRight, ArrowLeft, Mic, Volume2, Expand, Minimize, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -44,7 +44,10 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
   };
 
   const handleTranslate = () => {
-    if (!inputText.trim()) return;
+    if (!inputText.trim()) {
+      toast.error("Please enter text to translate");
+      return;
+    }
     
     setIsTranslating(true);
     
@@ -71,9 +74,6 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
         setInputText("irrigation system");
         setIsListening(false);
         toast.success("Voice input captured!");
-        
-        // Auto translate after voice input
-        setTimeout(() => handleTranslate(), 500);
       }, 2000);
     } else {
       toast.error("Speech recognition not supported in your browser");
@@ -98,19 +98,9 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
     setOutputText(inputText);
   };
 
-  useEffect(() => {
-    // Auto-translate after a delay when input changes
-    if (inputText.trim()) {
-      const handler = setTimeout(() => {
-        handleTranslate();
-      }, 1000);
-      return () => clearTimeout(handler);
-    }
-  }, [inputText]);
-
   return (
     <div className={cn(
-      "flex flex-col p-6 h-full transition-all duration-300",
+      "flex flex-col p-4 md:p-6 h-full transition-all duration-300",
       isExpanded ? "max-w-[1400px] mx-auto w-full" : "max-w-[1000px] mx-auto w-full"
     )}>
       <div className="flex justify-between items-center mb-6">
@@ -125,7 +115,7 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 flex-1">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 flex-1 relative">
         {/* Source Language Panel */}
         <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden 
                      transition-all duration-300 hover:shadow-md flex flex-col">
@@ -172,7 +162,7 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
           </div>
         </div>
 
-        {/* Direction Switch Button */}
+        {/* Direction Switch Button (fixed in the middle) */}
         <div className="hidden md:flex items-center justify-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
           <Button 
             variant="outline" 
@@ -252,21 +242,22 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
         </div>
       </div>
 
-      <div className="mt-6 bg-card border border-border rounded-lg p-4">
-        <h3 className="font-medium mb-2">Recent Phrases</h3>
-        <div className="flex flex-wrap gap-2">
-          {Object.keys(translations).slice(0, 5).map((term, i) => (
-            <Button 
-              key={i} 
-              variant="outline" 
-              size="sm"
-              className="text-xs bg-lingua-50 hover:bg-lingua-100 border-lingua-200 dark:bg-lingua-900/10 dark:border-lingua-800 dark:hover:bg-lingua-900/20"
-              onClick={() => setInputText(term)}
-            >
-              {term}
-            </Button>
-          ))}
-        </div>
+      {/* Added Translate Button */}
+      <div className="flex justify-center mt-6">
+        <Button 
+          onClick={handleTranslate} 
+          disabled={isTranslating || !inputText.trim()}
+          className="px-8 bg-lingua-500 hover:bg-lingua-600"
+        >
+          {isTranslating ? (
+            <>
+              <RefreshCcw className="h-4 w-4 mr-2 animate-spin" />
+              Translating...
+            </>
+          ) : (
+            "Translate"
+          )}
+        </Button>
       </div>
     </div>
   );
