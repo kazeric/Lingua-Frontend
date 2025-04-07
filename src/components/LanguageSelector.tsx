@@ -13,12 +13,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // Sample of low-resource languages particularly in agricultural regions
 const languages = {
   african: [
-    { code: "hau", name: "Hausa" },
-    { code: "yor", name: "Yoruba" },
-    { code: "lug", name: "Luganda" },
-    { code: "kin", name: "Kinyarwanda" },
-    { code: "sna", name: "Shona" },
-    { code: "orm", name: "Oromo" },
+    { code: "gir", name: "Giriama" },
+    { code: "swa", name: "Swahili" },
+    { code: "luo", name: "Luo" },
+    { code: "kam", name: "Kamba" },
+    { code: "maa", name: "Maasai" },
+    { code: "gor", name: "Gusii" },
   ],
   asian: [
     { code: "nep", name: "Nepali" },
@@ -39,7 +39,7 @@ const languages = {
 };
 
 const LanguageSelector = () => {
-  const [selectedLanguage, setSelectedLanguage] = useState("Kinyarwanda");
+  const [selectedLanguage, setSelectedLanguage] = useState("Giriama");
 
   return (
     <section id="languages" className="py-16 md:py-24 bg-accent/50">
@@ -85,14 +85,14 @@ const LanguageSelector = () => {
               </div>
               
               <div className="bg-muted/50 rounded-lg p-4">
-                <p className="text-sm text-muted-foreground mb-2">Language Information:</p>
+                <p className="text-sm text-muted-foreground mb-2">Currently Available:</p>
                 <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div className="font-medium">Region:</div>
-                  <div>East Africa</div>
-                  <div className="font-medium">Speakers:</div>
-                  <div>~12 million</div>
+                  <div className="font-medium">Primary Language:</div>
+                  <div>English</div>
+                  <div className="font-medium">Target Language:</div>
+                  <div>Giriama</div>
                   <div className="font-medium">Agricultural Terms:</div>
-                  <div className="text-lingua-500">2,500+ translated</div>
+                  <div className="text-lingua-500">500+ translated</div>
                 </div>
               </div>
             </div>
@@ -136,7 +136,7 @@ const LanguageSelector = () => {
               
               <div className="mt-6 pt-6 border-t border-border">
                 <p className="text-sm text-muted-foreground mb-4">
-                  Don't see your language? Help us expand our coverage:
+                  Don't see the language you need? Let us know:
                 </p>
                 <Button
                   className="w-full bg-lingua-500 hover:bg-lingua-600 text-white"

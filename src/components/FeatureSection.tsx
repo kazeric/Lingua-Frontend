@@ -6,7 +6,7 @@ import {
   Users, 
   FileSpreadsheet, 
   Mic, 
-  Phone
+  Zap
 } from "lucide-react";
 
 const features = [
@@ -24,9 +24,9 @@ const features = [
   },
   {
     icon: <Users className="h-8 w-8 text-lingua-500" />,
-    title: "Community Contributions",
+    title: "Text Translation",
     description:
-      "Platform for native speakers to review, correct and expand agricultural translations.",
+      "Accurate translations of written agricultural content between English and local languages.",
   },
   {
     icon: <FileSpreadsheet className="h-8 w-8 text-lingua-500" />,
@@ -41,10 +41,10 @@ const features = [
       "Speak and hear translations, making knowledge accessible regardless of literacy levels.",
   },
   {
-    icon: <Phone className="h-8 w-8 text-lingua-500" />,
-    title: "Offline Capability",
+    icon: <Zap className="h-8 w-8 text-lingua-500" />,
+    title: "Real-Time Processing",
     description:
-      "Work without internet connection in remote agricultural areas with downloadable language packs.",
+      "Fast translation processing to support immediate communication needs in agricultural settings.",
   },
 ];
 

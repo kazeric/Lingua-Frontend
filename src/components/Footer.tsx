@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Globe, Mail, Github, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -43,22 +44,22 @@ const Footer = () => {
 
           <div className="md:col-span-2">
             <h3 className="text-lg font-semibold mb-6">
-              Contribute to Our Language Database
+              Contact Us to Request a Language
             </h3>
             <div className="bg-muted/30 rounded-xl p-6 border border-border">
               <p className="text-muted-foreground mb-4">
-                Join our community of language experts and farmers to help build
-                bridges across agricultural knowledge.
+                Don't see your language on our platform? Let us know which agricultural 
+                language you need support for.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 mb-4">
                 <Input placeholder="Your email address" type="email" />
                 <Button className="bg-lingua-500 hover:bg-lingua-600 text-white">
-                  Subscribe
+                  Contact Us
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
-                By subscribing, you agree to receive updates about our data
-                collection projects. We respect your privacy.
+                By submitting, you agree to receive updates about new language additions. 
+                We respect your privacy.
               </p>
             </div>
           </div>
