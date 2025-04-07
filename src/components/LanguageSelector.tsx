@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // Sample of low-resource languages particularly in agricultural regions
 const languages = {
   african: [
-    { code: "gir", name: "Giriama" },
+    { code: "nyf", name: "Giriama" },
     { code: "swa", name: "Swahili" },
     { code: "luo", name: "Luo" },
     { code: "kam", name: "Kamba" },

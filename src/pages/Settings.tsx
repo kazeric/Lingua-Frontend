@@ -83,9 +83,7 @@ const Settings = () => {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="en">English</SelectItem>
-                        <SelectItem value="fr">French</SelectItem>
-                        <SelectItem value="es">Spanish</SelectItem>
-                        <SelectItem value="sw">Swahili</SelectItem>
+                        <SelectItem value="nyf">Swahili</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -97,10 +95,8 @@ const Settings = () => {
                         <SelectValue placeholder="Select language" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="kin">Kinyarwanda</SelectItem>
-                        <SelectItem value="lug">Luganda</SelectItem>
-                        <SelectItem value="hau">Hausa</SelectItem>
-                        <SelectItem value="yor">Yoruba</SelectItem>
+                        <SelectItem value="nyf">Giriama</SelectItem>
+                        <SelectItem value="en">English</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

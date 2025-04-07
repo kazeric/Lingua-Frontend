@@ -40,8 +40,8 @@ const TranslationDemo = () => {
   const [outputText, setOutputText] = useState("");
   const [isTranslating, setIsTranslating] = useState(false);
   const [sourceLanguage, setSourceLanguage] = useState("en");
-  const [targetLanguage, setTargetLanguage] = useState("gir");
-  const [translationDirection, setTranslationDirection] = useState("en-to-gir");
+  const [targetLanguage, setTargetLanguage] = useState("nyf");
+  const [translationDirection, setTranslationDirection] = useState("en-to-nyf");
   
   const handleSampleClick = (term) => {
     setInputText(term);
@@ -50,7 +50,7 @@ const TranslationDemo = () => {
     setTimeout(() => {
       setIsTranslating(true);
       setTimeout(() => {
-        if (translationDirection === "en-to-gir") {
+        if (translationDirection === "en-to-nyf") {
           setOutputText(translations[term.toLowerCase()]);
         } else {
           // Reverse lookup for gir-to-en
@@ -65,9 +65,9 @@ const TranslationDemo = () => {
   };
 
   const switchDirection = () => {
-    if (translationDirection === "en-to-gir") {
-      setTranslationDirection("gir-to-en");
-      setSourceLanguage("gir");
+    if (translationDirection === "en-to-nyf") {
+      setTranslationDirection("nyf-to-en");
+      setSourceLanguage("nyf");
       setTargetLanguage("en");
       // Swap input and output
       if (inputText) {
@@ -76,9 +76,9 @@ const TranslationDemo = () => {
         setOutputText(tempText);
       }
     } else {
-      setTranslationDirection("en-to-gir");
+      setTranslationDirection("en-to-nyf");
       setSourceLanguage("en");
-      setTargetLanguage("gir");
+      setTargetLanguage("nyf");
       // Swap input and output
       if (inputText) {
         const tempText = inputText;
@@ -111,7 +111,7 @@ const TranslationDemo = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="en">English</SelectItem>
-                    <SelectItem value="gir">Giriama</SelectItem>
+                    <SelectItem value="nyf">Giriama</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -131,7 +131,7 @@ const TranslationDemo = () => {
                     <SelectValue placeholder="Select language" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="gir">Giriama</SelectItem>
+                    <SelectItem value="nyf">Giriama</SelectItem>
                     <SelectItem value="en">English</SelectItem>
                   </SelectContent>
                 </Select>
@@ -168,7 +168,7 @@ const TranslationDemo = () => {
             <div className="mt-8">
               <h3 className="text-sm font-medium mb-3">Try with agricultural terms:</h3>
               <div className="flex flex-wrap gap-2">
-                {(translationDirection === "en-to-gir" ? agriculturalTerms : Object.values(translations)).map((term, index) => (
+                {(translationDirection === "en-to-nyf" ? agriculturalTerms : Object.values(translations)).map((term, index) => (
                   <Button
                     key={index}
                     variant="outline"

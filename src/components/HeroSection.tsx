@@ -14,7 +14,7 @@ const HeroSection = () => {
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-              Language Translation for <span className="text-lingua-500">Agricultural Data</span>
+              Language Translation for <span className="text-lingua-500">Agricultural Context</span>
             </h1>
             
             <p className="text-lg text-muted-foreground max-w-lg">
@@ -56,9 +56,9 @@ const HeroSection = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <div className="font-medium text-sm text-muted-foreground">Kinyarwanda</div>
+                  <div className="font-medium text-sm text-muted-foreground">Giriama</div>
                   <div className="p-3 bg-lingua-50 rounded-md border border-lingua-100 dark:bg-lingua-900/10 dark:border-lingua-800">
-                    Ni gute gushyira mu bikorwa uburyo burambye bwo kuhira ku ma ferme mato?
+                    Nini kutsaza mfumo wa kumwagiza wa endelofu kwa mashamba madogo?
                   </div>
                 </div>
                 
@@ -70,9 +70,9 @@ const HeroSection = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <div className="font-medium text-sm text-muted-foreground">Luganda</div>
+                  <div className="font-medium text-sm text-muted-foreground">Giriama</div>
                   <div className="p-3 bg-lingua-50 rounded-md border border-lingua-100 dark:bg-lingua-900/10 dark:border-lingua-800">
-                    Ddi ekiseera ekisinga obulungi okusimba kasooli agumikiriza ekyeya?
+                    Hani wakati mwema wa kuhamba mahindi ya kustahimili ukame?
                   </div>
                 </div>
               </div>

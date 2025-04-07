@@ -127,9 +127,7 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="fr">French</SelectItem>
-                  <SelectItem value="es">Spanish</SelectItem>
-                  <SelectItem value="sw">Swahili</SelectItem>
+                  <SelectItem value="fr">Giriama</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -191,10 +189,8 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
                   <SelectValue placeholder="Select language" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="kin">Kinyarwanda</SelectItem>
-                  <SelectItem value="lug">Luganda</SelectItem>
-                  <SelectItem value="hau">Hausa</SelectItem>
-                  <SelectItem value="yor">Yoruba</SelectItem>
+                  <SelectItem value="gir">Giriama</SelectItem>
+                  <SelectItem value="hau">English</SelectItem>
                 </SelectContent>
               </Select>
             </div>
