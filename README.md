@@ -1,73 +1,61 @@
-# Welcome to your Lovable project
+# 🌍 Lingo_Connect – Language Translation for Low-Resource Communities
 
-## Project info
+**Lingo_Connect** is a modern, interactive web app designed to bridge language gaps between field officers and farmers in rural settings. Built with React and Tailwind CSS, it leverages Machine Translation, ASR (Automatic Speech Recognition), and TTS (Text-to-Speech) to enable real-time multilingual communication — starting with English ↔ Giriama.
 
-**URL**: https://lovable.dev/projects/870c0e1d-0053-49fd-83f4-7c4c21bbebf1
+![Lingo_Connect Banner](banner-image-url) <!-- Optional image or illustration -->
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 🚀 Features
 
-**Use Lovable**
+- 🔄 **Text & Voice Translation** – Convert spoken or typed phrases from one language to another.
+- 🎙️ **ASR Integration** – Speak directly into the app using the microphone icon.
+- 🔔 **TTS Output** – Listen to the translated response with natural-sounding audio.
+- 🌱 **Farmer–Officer UI Design** – Inspired by rural interactions in agricultural fields.
+- 🧭 **Dashboard-Style Layout** – Modern, clean, and responsive design with sidebar navigation.
+- ⚙️ **Customizable Settings** – Set default languages, toggle auto-translate, manage history.
+- 🧾 **Translation History** – View and delete past translations for reference.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/870c0e1d-0053-49fd-83f4-7c4c21bbebf1) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🖥️ Tech Stack
 
-**Use your preferred IDE**
+- **Frontend**: React.js, Tailwind CSS, Framer Motion
+- **Deployment**: Vercel / Netlify
+- **APIs** (to be integrated):
+  - Automatic Speech Recognition (ASR)
+  - Machine Translation Model (Custom)
+  - Text-to-Speech (TTS)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 📸 UI Preview
 
-Follow these steps:
+> 📍 *Landing Page* – About the app, purpose, and key features  
+> 📍 *Main Dashboard* – Split interface for input (mic icon) and output (bell icon)  
+> 📍 *Settings Page* – Language selection, auto-translate toggle  
+> 📍 *History Page* – View/delete past translation records  
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+---
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 🛠️ Setup & Installation
 
-# Step 3: Install the necessary dependencies.
-npm i
+```bash
+# Clone the repo
+git clone https://github.com/JMWagunda/lingo_connect-visuals-bridge.git
+cd lingo_connect
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Install dependencies
+npm install
+
+# Start the development server
 npm run dev
 ```
+## 🧪 Coming Soon
+- 📲 Mobile-first Flutter app version
+- 🧠 Improved NMT model performance for more local languages
+- 🔐 User authentication and translation sync across devices
 
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/870c0e1d-0053-49fd-83f4-7c4c21bbebf1) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes it is!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## 🙌 Acknowledgements
+- Inspired by real-world communication challenges in agriculture and rural outreach
+- Built for communities speaking low-resource languages like Giriama
