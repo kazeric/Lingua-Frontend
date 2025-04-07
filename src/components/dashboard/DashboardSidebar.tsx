@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { 
   Home, 
-  Translate, 
+  Languages, 
   History, 
   Settings,
   ChevronLeft,
@@ -23,7 +23,7 @@ export const DashboardSidebar = () => {
   
   const navItems = [
     { icon: Home, label: "Home", path: "/" },
-    { icon: Translate, label: "Translate", path: "/dashboard", active: true },
+    { icon: Languages, label: "Translate", path: "/dashboard", active: true },
     { icon: History, label: "History", path: "/history" },
     { icon: Settings, label: "Settings", path: "/settings" },
   ];
