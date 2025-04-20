@@ -6,9 +6,10 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
 const Footer = () => {
-  const handleContactClick = (e) => {
+  const handleContactClick = (e: React.FormEvent) => {
     e.preventDefault();
-    const email = document.getElementById('contact-email')?.value;
+    const emailInput = document.getElementById('contact-email') as HTMLInputElement;
+    const email = emailInput?.value;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     
     if (!email || !emailRegex.test(email)) {
