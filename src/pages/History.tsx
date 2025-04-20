@@ -44,7 +44,7 @@ const History = () => {
       
       <main className="flex-1 flex flex-col overflow-y-auto">
         <div className="container mx-auto p-4 md:p-6 h-full flex flex-col">
-          <h1 className="text-2xl font-bold mb-6">Translation History</h1>
+          <h1 className={`text-2xl font-bold mb-6 ${isMobile ? "mt-10" : ""}`}>Translation History</h1>
           
           <div className="grid gap-4">
             {historyItems.map((item) => (

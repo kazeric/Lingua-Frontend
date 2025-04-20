@@ -61,7 +61,7 @@ export const DashboardSidebar = () => {
     <>
       {/* Mobile Top Bar */}
       {isMobile && (
-        <div className="bg-card border-b border-border py-3 px-4 flex items-center justify-between sticky top-0 z-30">
+        <div className="bg-card border-b border-border py-3 px-4 flex items-center justify-between fixed top-0 left-0 right-0 z-30">
           <div className="flex items-center space-x-2">
             <Globe className="h-5 w-5 text-lingua-500" />
             <span className="font-bold">Lingua Connect</span>
@@ -187,6 +187,9 @@ export const DashboardSidebar = () => {
           </div>
         )}
       </aside>
+      
+      {/* Page Content Spacer for Mobile */}
+      {isMobile && <div className="h-14" />}
     </>
   );
 };
