@@ -27,7 +27,7 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2 animate-fade-in">
+          <div className={`flex items-center space-x-2 animate-fade-in ${isMobileMenuOpen ? 'z-20' : ''}`}>
             <Globe className="h-6 w-6 text-lingua-500" />
             <span className="font-bold text-xl">Lingua Connect</span>
           </div>
@@ -44,7 +44,7 @@ const Navbar = () => {
               Try It
             </a>
             <a href="#contribute" className="link-underline font-medium">
-              Contribute
+              Request Language
             </a>
             <Link to="/dashboard">
               <Button className="bg-lingua-500 hover:bg-lingua-600 text-white rounded-full">
@@ -55,7 +55,7 @@ const Navbar = () => {
           </nav>
 
           {/* Mobile Menu Button */}
-          <div className="flex items-center md:hidden space-x-4">
+          <div className="flex items-center md:hidden space-x-4 z-20">
             <ThemeToggle />
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -71,49 +71,55 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Navigation with blur overlay */}
         {isMobileMenuOpen && (
-          <nav className="md:hidden py-4 animate-slide-down">
-            <div className="flex flex-col space-y-4">
-              <a
-                href="#features"
-                className="py-2 px-4 hover:bg-accent rounded-md"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Features
-              </a>
-              <a
-                href="#languages"
-                className="py-2 px-4 hover:bg-accent rounded-md"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Languages
-              </a>
-              <a
-                href="#demo"
-                className="py-2 px-4 hover:bg-accent rounded-md"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Try It
-              </a>
-              <a
-                href="#contribute"
-                className="py-2 px-4 hover:bg-accent rounded-md"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Contribute
-              </a>
-              <Link 
-                to="/dashboard"
-                className="w-full"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <Button className="bg-lingua-500 hover:bg-lingua-600 text-white w-full">
-                  Get Started
-                </Button>
-              </Link>
-            </div>
-          </nav>
+          <>
+            <div 
+              className="fixed inset-0 bg-background/70 backdrop-blur-sm z-10" 
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            <nav className="md:hidden py-4 animate-slide-down relative z-20 bg-card rounded-b-lg shadow-lg">
+              <div className="flex flex-col space-y-4">
+                <a
+                  href="#features"
+                  className="py-2 px-4 hover:bg-accent rounded-md"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Features
+                </a>
+                <a
+                  href="#languages"
+                  className="py-2 px-4 hover:bg-accent rounded-md"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Languages
+                </a>
+                <a
+                  href="#demo"
+                  className="py-2 px-4 hover:bg-accent rounded-md"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Try It
+                </a>
+                <a
+                  href="#contribute"
+                  className="py-2 px-4 hover:bg-accent rounded-md"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Request Language
+                </a>
+                <Link 
+                  to="/dashboard"
+                  className="w-full"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <Button className="bg-lingua-500 hover:bg-lingua-600 text-white w-full">
+                    Get Started
+                  </Button>
+                </Link>
+              </div>
+            </nav>
+          </>
         )}
       </div>
     </header>

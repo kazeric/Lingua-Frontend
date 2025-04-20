@@ -5,32 +5,35 @@ import { Toaster } from "sonner";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Clock, Languages, MoreVertical, Trash2 } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const History = () => {
+  const isMobile = useIsMobile();
+  
   // Sample history data - in a real app, this would come from an API or local storage
   const historyItems = [
     { 
       id: 1, 
       sourceText: "irrigation system", 
-      translatedText: "uburyo bwo kuhira", 
+      translatedText: "mfumo wa kumwagiza", 
       sourceLang: "English", 
-      targetLang: "Kinyarwanda", 
+      targetLang: "Giriama", 
       date: "2024-04-07 10:23" 
     },
     { 
       id: 2, 
       sourceText: "crop rotation", 
-      translatedText: "guhinduranya ibihingwa", 
+      translatedText: "kugaluza mimea", 
       sourceLang: "English", 
-      targetLang: "Kinyarwanda", 
+      targetLang: "Giriama", 
       date: "2024-04-06 15:45" 
     },
     { 
       id: 3, 
       sourceText: "sustainable farming", 
-      translatedText: "ubuhinzi burambye", 
+      translatedText: "kilimo cha kudumu", 
       sourceLang: "English", 
-      targetLang: "Kinyarwanda", 
+      targetLang: "Giriama", 
       date: "2024-04-06 14:12" 
     },
   ];

@@ -10,14 +10,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Globe, Bell, Moon, Sun, User, Lock, Save } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { toast } from "sonner";
 
 const Settings = () => {
   const { theme, setTheme } = useTheme();
-  const [autoTranslate, setAutoTranslate] = useState(true);
+  const [autoTranslate, setAutoTranslate] = useState(false);
   const [saveHistory, setSaveHistory] = useState(true);
   const [notifications, setNotifications] = useState(true);
   const [defaultSourceLang, setDefaultSourceLang] = useState("en");
-  const [defaultTargetLang, setDefaultTargetLang] = useState("kin");
+  const [defaultTargetLang, setDefaultTargetLang] = useState("gir");
+  const isMobile = useIsMobile();
+
+  const handleSaveSettings = () => {
+    toast.success("Settings saved successfully!");
+  };
   
   return (
     <div className="flex h-screen overflow-hidden bg-background">
@@ -83,9 +90,7 @@ const Settings = () => {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="en">English</SelectItem>
-                        <SelectItem value="nys">Giriama</SelectItem>
-                        <SelectItem value="es">Spanish</SelectItem>
-                        <SelectItem value="sw">Swahili</SelectItem>
+                        <SelectItem value="gir">Giriama</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -97,10 +102,8 @@ const Settings = () => {
                         <SelectValue placeholder="Select language" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="nys">Giriama</SelectItem>
-                        <SelectItem value="lug">English</SelectItem>
-                        <SelectItem value="hau">Hausa</SelectItem>
-                        <SelectItem value="yor">Yoruba</SelectItem>
+                        <SelectItem value="gir">Giriama</SelectItem>
+                        <SelectItem value="en">English</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -185,7 +188,7 @@ const Settings = () => {
                 </p>
               </CardContent>
               <CardFooter>
-                <Button className="w-full md:w-auto">
+                <Button className="w-full md:w-auto" onClick={handleSaveSettings}>
                   <Save className="h-4 w-4 mr-2" />
                   Save Settings
                 </Button>

@@ -3,8 +3,25 @@ import React from "react";
 import { Globe, Mail, Github, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 const Footer = () => {
+  const handleContactClick = (e) => {
+    e.preventDefault();
+    const email = document.getElementById('contact-email')?.value;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (!email || !emailRegex.test(email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+    
+    // Open email client with pre-filled recipient
+    window.location.href = `mailto:linguaconnect@example.com?subject=Language%20Request&body=Hello%20Lingua%20Connect%20Team,%0A%0AI'm%20interested%20in%20requesting%20support%20for%20a%20new%20language.%0A%0AMy%20contact%20email:%20${email}`;
+    
+    toast.success("Opening email client...");
+  };
+
   return (
     <footer className="bg-card border-t border-border">
       <div id="contribute" className="container mx-auto px-4 md:px-6 py-12 md:py-16">
@@ -26,7 +43,7 @@ const Footer = () => {
                 <Github className="h-5 w-5" />
               </a>
               <a
-                href="#"
+                href="mailto:linguaconnect@example.com"
                 className="p-2 rounded-full bg-muted hover:bg-lingua-100 dark:hover:bg-lingua-900/20 transition-colors"
                 aria-label="Mail"
               >
@@ -52,8 +69,11 @@ const Footer = () => {
                 language you need support for.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 mb-4">
-                <Input placeholder="Your email address" type="email" />
-                <Button className="bg-lingua-500 hover:bg-lingua-600 text-white">
+                <Input id="contact-email" placeholder="Your email address" type="email" />
+                <Button 
+                  className="bg-lingua-500 hover:bg-lingua-600 text-white"
+                  onClick={handleContactClick}
+                >
                   Contact Us
                 </Button>
               </div>

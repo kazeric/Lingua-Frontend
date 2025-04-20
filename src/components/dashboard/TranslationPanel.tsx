@@ -1,6 +1,6 @@
 
-import React, { useState } from "react";
-import { ArrowRight, ArrowLeft, Mic, Volume2, Expand, Minimize, RefreshCcw } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { ArrowRight, ArrowLeft, Mic, Volume2, Expand, Minimize, RefreshCcw, Languages } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface TranslationPanelProps {
   isExpanded: boolean;
@@ -26,10 +27,12 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
   const [outputText, setOutputText] = useState("");
   const [isTranslating, setIsTranslating] = useState(false);
   const [sourceLanguage, setSourceLanguage] = useState("en");
-  const [targetLanguage, setTargetLanguage] = useState("kin");
+  const [targetLanguage, setTargetLanguage] = useState("gir");
   const [isListening, setIsListening] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
   const [isHoveringSwitch, setIsHoveringSwitch] = useState(false);
+  const [autoTranslate, setAutoTranslate] = useState(false);
+  const isMobile = useIsMobile();
   
   // Simulated translations
   const translations = {
@@ -42,6 +45,17 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
     "organic fertilizer": "ifumbire mvaruganda",
     "pest management": "gucunga ibyonnyi",
   };
+
+  // Auto translate effect
+  useEffect(() => {
+    if (autoTranslate && inputText.trim()) {
+      const timer = setTimeout(() => {
+        handleTranslate();
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [inputText, autoTranslate]);
 
   const handleTranslate = () => {
     if (!inputText.trim()) {
@@ -98,6 +112,16 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
     setOutputText(inputText);
   };
 
+  const getLanguageName = (code) => {
+    const languages = {
+      en: "English",
+      gir: "Giriama",
+      fr: "French",
+      hau: "Hausa"
+    };
+    return languages[code] || code;
+  };
+
   return (
     <div className={cn(
       "flex flex-col p-4 md:p-6 h-full transition-all duration-300",
@@ -105,14 +129,16 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
     )}>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Translation Dashboard</h1>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="rounded-full"
-        >
-          {isExpanded ? <Minimize className="h-5 w-5" /> : <Expand className="h-5 w-5" />}
-        </Button>
+        {!isMobile && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="rounded-full"
+          >
+            {isExpanded ? <Minimize className="h-5 w-5" /> : <Expand className="h-5 w-5" />}
+          </Button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 flex-1 relative">
@@ -123,11 +149,11 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
             <div className="w-full">
               <Select value={sourceLanguage} onValueChange={setSourceLanguage}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select language" />
+                  <SelectValue placeholder="Select language">{getLanguageName(sourceLanguage)}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="fr">Giriama</SelectItem>
+                  <SelectItem value="gir">Giriama</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -186,11 +212,11 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
             <div className="w-full">
               <Select value={targetLanguage} onValueChange={setTargetLanguage}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select language" />
+                  <SelectValue placeholder="Select language">{getLanguageName(targetLanguage)}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="gir">Giriama</SelectItem>
-                  <SelectItem value="hau">English</SelectItem>
+                  <SelectItem value="en">English</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -238,7 +264,7 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
         </div>
       </div>
 
-      {/* Added Translate Button */}
+      {/* Translate Button */}
       <div className="flex justify-center mt-6">
         <Button 
           onClick={handleTranslate} 
@@ -251,7 +277,10 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
               Translating...
             </>
           ) : (
-            "Translate"
+            <>
+              <Languages className="h-4 w-4 mr-2" />
+              Translate
+            </>
           )}
         </Button>
       </div>

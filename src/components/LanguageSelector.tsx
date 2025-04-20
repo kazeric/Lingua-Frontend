@@ -15,31 +15,18 @@ const languages = {
   african: [
     { code: "en", name: "English" },
     { code: "nyf", name: "Giriama" },
-    // { code: "luo", name: "Luo" },
-    // { code: "kam", name: "Kamba" },
-    // { code: "maa", name: "Maasai" },
-    // { code: "gor", name: "Gusii" },
   ],
-  // asian: [
-  //   { code: "nep", name: "Nepali" },
-  //   { code: "sin", name: "Sinhala" },
-  //   { code: "urd", name: "Urdu" },
-  //   { code: "khm", name: "Khmer" },
-  //   { code: "lao", name: "Lao" },
-  //   { code: "mya", name: "Burmese" },
-  // ],
-  // pacific: [
-  //   { code: "haw", name: "Hawaiian" },
-  //   { code: "sam", name: "Samoan" },
-  //   { code: "ton", name: "Tongan" },
-  //   { code: "fij", name: "Fijian" },
-  //   { code: "mri", name: "Māori" },
-  //   { code: "tet", name: "Tetum" },
-  // ],
 };
 
 const LanguageSelector = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("Giriama");
+
+  const scrollToContribute = () => {
+    const contributeSection = document.getElementById('contribute');
+    if (contributeSection) {
+      contributeSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <section id="languages" className="py-16 md:py-24 bg-accent/50">
@@ -101,37 +88,37 @@ const LanguageSelector = () => {
           <div className="md:w-1/2 animate-slide-left">
             <div className="bg-card rounded-xl p-6 border border-border shadow-md">
               <Tabs defaultValue="african" className="w-full">
-                <TabsList className="grid grid mb-6">
+                <TabsList className="grid mb-6">
                   <TabsTrigger value="african">African</TabsTrigger>
-                  {/* <TabsTrigger value="asian">Asian</TabsTrigger>
-                  <TabsTrigger value="pacific">Pacific</TabsTrigger> */}
                 </TabsList>
                 
-                {Object.entries(languages).map(([region, langs]) => (
-                  <TabsContent value={region} key={region} className="mt-0">
-                    <div className="grid grid-cols-2 gap-3">
-                      {langs.map((lang) => (
-                        <Button
-                          key={lang.code}
-                          variant="outline"
-                          className={`justify-start text-left h-auto py-3 px-4 ${
-                            selectedLanguage === lang.name
-                              ? "border-lingua-500 bg-lingua-50 dark:bg-lingua-900/20"
-                              : ""
-                          }`}
-                          onClick={() => setSelectedLanguage(lang.name)}
-                        >
-                          <div className="flex flex-col items-start">
-                            <span className="font-medium">{lang.name}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {lang.code}
+                <TabsContent value="african" className="mt-0">
+                  <div className="grid grid-cols-2 gap-3">
+                    {languages.african.map((lang) => (
+                      <div 
+                        key={lang.code}
+                        className={`rounded-lg p-4 border transition-colors cursor-pointer ${
+                          selectedLanguage === lang.name
+                            ? "border-lingua-500 bg-lingua-50 dark:bg-lingua-900/20"
+                            : "border-border bg-card hover:bg-accent/50"
+                        }`}
+                        onClick={() => setSelectedLanguage(lang.name)}
+                      >
+                        <div className="flex flex-col items-start">
+                          <span className="font-medium text-lg mb-1">{lang.name}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {lang.code.toUpperCase()}
+                          </span>
+                          {selectedLanguage === lang.name && (
+                            <span className="text-xs mt-2 bg-lingua-100 dark:bg-lingua-900/30 text-lingua-700 dark:text-lingua-300 px-2 py-0.5 rounded-full">
+                              Currently selected
                             </span>
-                          </div>
-                        </Button>
-                      ))}
-                    </div>
-                  </TabsContent>
-                ))}
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </TabsContent>
               </Tabs>
               
               <div className="mt-6 pt-6 border-t border-border">
@@ -140,6 +127,7 @@ const LanguageSelector = () => {
                 </p>
                 <Button
                   className="w-full bg-lingua-500 hover:bg-lingua-600 text-white"
+                  onClick={scrollToContribute}
                 >
                   Request a Language
                 </Button>
