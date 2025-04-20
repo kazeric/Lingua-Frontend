@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { ArrowRight, ArrowLeft, Mic, Volume2, Expand, Minimize, RefreshCcw, Languages } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,10 +30,12 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
   const [isListening, setIsListening] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
   const [isHoveringSwitch, setIsHoveringSwitch] = useState(false);
-  const [autoTranslate, setAutoTranslate] = useState(false);
+  const [autoTranslate, setAutoTranslate] = useState(() => {
+    return localStorage.getItem('autoTranslate') === 'true';
+  });
+
   const isMobile = useIsMobile();
   
-  // Simulated translations
   const translations = {
     "irrigation system": "uburyo bwo kuhira",
     "crop rotation": "guhinduranya ibihingwa",
@@ -46,7 +47,17 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
     "pest management": "gucunga ibyonnyi",
   };
 
-  // Auto translate effect
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'autoTranslate') {
+        setAutoTranslate(e.newValue === 'true');
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   useEffect(() => {
     if (autoTranslate && inputText.trim()) {
       const timer = setTimeout(() => {
@@ -62,16 +73,19 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
       toast.error("Please enter text to translate");
       return;
     }
+
+    if (sourceLanguage === targetLanguage) {
+      toast.error("Source and target languages cannot be the same");
+      return;
+    }
     
     setIsTranslating(true);
     
-    // Simulate translation process
     setTimeout(() => {
       if (translations[inputText.toLowerCase()]) {
         setOutputText(translations[inputText.toLowerCase()]);
         toast.success("Translation complete!");
       } else {
-        // Simulated translation for non-matching text
         setOutputText("Byahuwe (translated text would appear here)");
       }
       setIsTranslating(false);
@@ -83,7 +97,6 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
       setIsListening(true);
       toast.info("Listening...");
       
-      // Simulate voice recognition
       setTimeout(() => {
         setInputText("irrigation system");
         setIsListening(false);
@@ -104,6 +117,11 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
   };
 
   const switchLanguages = () => {
+    if (sourceLanguage === targetLanguage) {
+      toast.error("Cannot switch identical languages");
+      return;
+    }
+
     setIsFlipped(!isFlipped);
     const temp = sourceLanguage;
     setSourceLanguage(targetLanguage);
@@ -142,7 +160,6 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 flex-1 relative">
-        {/* Source Language Panel */}
         <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden 
                      transition-all duration-300 hover:shadow-md flex flex-col">
           <div className="p-4 border-b border-border flex items-center justify-between">
@@ -186,7 +203,6 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
           </div>
         </div>
 
-        {/* Direction Switch Button (fixed in the middle) */}
         <div className="hidden md:flex items-center justify-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
           <Button 
             variant="outline" 
@@ -205,7 +221,6 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
           </Button>
         </div>
 
-        {/* Target Language Panel */}
         <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden 
                      transition-all duration-300 hover:shadow-md flex flex-col">
           <div className="p-4 border-b border-border flex items-center justify-between">
@@ -240,7 +255,6 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
           
           <div className="p-4 border-t border-border flex justify-between">
             <div>
-              {/* Mobile direction switch button */}
               <Button 
                 variant="outline" 
                 className="md:hidden mr-2"
@@ -264,7 +278,6 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
         </div>
       </div>
 
-      {/* Translate Button */}
       <div className="flex justify-center mt-6">
         <Button 
           onClick={handleTranslate} 

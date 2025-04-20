@@ -1,24 +1,33 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { Toaster } from "sonner";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Clock, Languages, MoreVertical, Trash2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { toast } from "sonner";
 
 const History = () => {
   const isMobile = useIsMobile();
-  
-  // Sample history data - in a real app, this would come from an API or local storage
-  const historyItems = [
+  const [historyItems, setHistoryItems] = useState([
     { 
       id: 1, 
       sourceText: "irrigation system", 
       translatedText: "mfumo wa kumwagiza", 
       sourceLang: "English", 
       targetLang: "Giriama", 
-      date: "2024-04-07 10:23" 
+      date: "2024-04-07 10:23",
+      fromDashboard: true
     },
     { 
       id: 2, 
@@ -26,17 +35,18 @@ const History = () => {
       translatedText: "kugaluza mimea", 
       sourceLang: "English", 
       targetLang: "Giriama", 
-      date: "2024-04-06 15:45" 
-    },
-    { 
-      id: 3, 
-      sourceText: "sustainable farming", 
-      translatedText: "kilimo cha kudumu", 
-      sourceLang: "English", 
-      targetLang: "Giriama", 
-      date: "2024-04-06 14:12" 
-    },
-  ];
+      date: "2024-04-06 15:45",
+      fromDashboard: true
+    }
+  ]);
+
+  const handleDeleteAll = () => {
+    setHistoryItems([]);
+    toast.success("Translation history cleared successfully");
+  };
+  
+  // Filter only translations from dashboard
+  const dashboardTranslations = historyItems.filter(item => item.fromDashboard);
   
   return (
     <div className="flex h-screen overflow-hidden bg-background">
@@ -44,10 +54,39 @@ const History = () => {
       
       <main className="flex-1 flex flex-col overflow-y-auto">
         <div className="container mx-auto p-4 md:p-6 h-full flex flex-col">
-          <h1 className={`text-2xl font-bold mb-6 ${isMobile ? "mt-10" : ""}`}>Translation History</h1>
+          <div className="flex justify-between items-center mb-6">
+            <h1 className={`text-2xl font-bold ${isMobile ? "mt-10" : ""}`}>
+              Translation History
+            </h1>
+            
+            {dashboardTranslations.length > 0 && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    <Trash2 className="h-4 w-4" />
+                    Delete All
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Clear Translation History</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to delete all translation history? This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteAll}>
+                      Delete All
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+          </div>
           
           <div className="grid gap-4">
-            {historyItems.map((item) => (
+            {dashboardTranslations.map((item) => (
               <Card key={item.id} className="transition-all hover:shadow-md">
                 <CardContent className="p-4">
                   <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
@@ -91,7 +130,7 @@ const History = () => {
             ))}
           </div>
           
-          {historyItems.length === 0 && (
+          {dashboardTranslations.length === 0 && (
             <div className="flex flex-col items-center justify-center flex-1 text-center">
               <Clock className="h-12 w-12 text-muted-foreground mb-4" />
               <h2 className="text-xl font-medium mb-2">No translation history yet</h2>

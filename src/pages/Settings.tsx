@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { Toaster } from "sonner";
 import { Switch } from "@/components/ui/switch";
@@ -22,6 +21,11 @@ const Settings = () => {
   const [defaultTargetLang, setDefaultTargetLang] = useState("gir");
   const isMobile = useIsMobile();
 
+  useEffect(() => {
+    // Save auto-translate preference to localStorage
+    localStorage.setItem('autoTranslate', String(autoTranslate));
+  }, [autoTranslate]);
+
   const handleSaveSettings = () => {
     toast.success("Settings saved successfully!");
   };
@@ -32,7 +36,7 @@ const Settings = () => {
       
       <main className="flex-1 flex flex-col overflow-y-auto">
         <div className="container mx-auto p-4 md:p-6 max-w-5xl">
-          <h1 className="text-2xl font-bold mb-6">Settings</h1>
+          <h1 className={`text-2xl font-bold mb-6 ${isMobile ? "mt-10" : ""}`}>Settings</h1>
           
           <div className="grid gap-6">
             {/* Appearance Settings */}
@@ -74,41 +78,13 @@ const Settings = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Globe className="h-5 w-5" />
-                  Language Preferences
+                  Translation Preferences
                 </CardTitle>
                 <CardDescription>
-                  Configure your default translation languages
+                  Configure your translation behavior
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="source-language">Default Source Language</Label>
-                    <Select value={defaultSourceLang} onValueChange={setDefaultSourceLang}>
-                      <SelectTrigger id="source-language">
-                        <SelectValue placeholder="Select language" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="en">English</SelectItem>
-                        <SelectItem value="gir">Giriama</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="target-language">Default Target Language</Label>
-                    <Select value={defaultTargetLang} onValueChange={setDefaultTargetLang}>
-                      <SelectTrigger id="target-language">
-                        <SelectValue placeholder="Select language" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="gir">Giriama</SelectItem>
-                        <SelectItem value="en">English</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <Label htmlFor="auto-translate">Auto-Translate</Label>
