@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
@@ -9,7 +8,8 @@ import {
   Moon,
   Sun,
   X,
-  Menu
+  Menu,
+  Globe
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
@@ -21,8 +21,7 @@ export const DashboardSidebar = () => {
   const { theme, setTheme } = useTheme();
   const isMobile = useIsMobile();
   const location = useLocation();
-
-  // Handle clicking outside to close mobile sidebar
+  
   useEffect(() => {
     const handleClickOutside = (event) => {
       const sidebar = document.getElementById('dashboard-sidebar');
@@ -37,7 +36,7 @@ export const DashboardSidebar = () => {
   
   const navItems = [
     { icon: Home, label: "Home", path: "/" },
-    { icon: Languages, label: "Translate", path: "/dashboard" },
+    { icon: Languages, label: "Translation Dashboard", path: "/dashboard" },
     { icon: History, label: "History", path: "/history" },
     { icon: Settings, label: "Settings", path: "/settings" },
   ];
@@ -57,6 +56,11 @@ export const DashboardSidebar = () => {
           >
             <Menu className="h-5 w-5" />
           </Button>
+          
+          <div className="flex items-center gap-2">
+            <Globe className="h-5 w-5 text-lingua-500" />
+            <span className="font-medium">Translation Dashboard</span>
+          </div>
           
           <Button
             variant="ghost"
@@ -94,16 +98,10 @@ export const DashboardSidebar = () => {
         )}
       >
         <div className="p-4 flex items-center justify-between border-b border-border">
-          {!isMobile && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="rounded-full"
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            <Globe className="h-5 w-5 text-lingua-500" />
+            <span className="font-medium">Lingua Connect</span>
+          </div>
           
           {isMobile && (
             <Button 

@@ -5,6 +5,7 @@ import { Toaster } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Clock, Languages, MoreVertical, Trash2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useNavigate } from "react-router-dom";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,7 +16,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { 
   Card, 
@@ -25,6 +32,7 @@ import {
 } from "@/components/ui/card";
 
 const History = () => {
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [historyItems, setHistoryItems] = useState([
     { 
@@ -51,8 +59,16 @@ const History = () => {
     setHistoryItems([]);
     toast.success("Translation history cleared successfully");
   };
+
+  const handleDeleteItem = (id: number) => {
+    setHistoryItems(items => items.filter(item => item.id !== id));
+    toast.success("Translation removed from history");
+  };
+
+  const handleStartTranslating = () => {
+    navigate("/dashboard");
+  };
   
-  // Filter only translations from dashboard
   const dashboardTranslations = historyItems.filter(item => item.fromDashboard);
   
   return (
@@ -61,11 +77,11 @@ const History = () => {
       
       <main className="flex-1 flex flex-col overflow-y-auto">
         <div className="container mx-auto p-4 md:p-6 h-full flex flex-col">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className={`text-2xl font-bold ${isMobile ? "mt-10" : ""}`}>
-              Translation History
-            </h1>
-            
+          <h1 className={`text-2xl font-bold mt-16 mb-6 ${isMobile ? "mt-20" : ""}`}>
+            Translation History
+          </h1>
+          
+          <div className="flex justify-end mb-6">
             {dashboardTranslations.length > 0 && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -113,12 +129,26 @@ const History = () => {
                     </div>
                     
                     <div className="flex items-center">
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8"
+                        onClick={() => handleDeleteItem(item.id)}
+                      >
                         <Trash2 className="h-4 w-4 text-muted-foreground" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreVertical className="h-4 w-4 text-muted-foreground" />
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MoreVertical className="h-4 w-4 text-muted-foreground" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleDeleteItem(item.id)}>
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </div>
                   
@@ -144,7 +174,7 @@ const History = () => {
               <p className="text-muted-foreground mb-4">
                 Your translation history will appear here once you start translating.
               </p>
-              <Button>Start Translating</Button>
+              <Button onClick={handleStartTranslating}>Start Translating</Button>
             </div>
           )}
         </div>
