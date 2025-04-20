@@ -6,7 +6,6 @@ import {
   Languages, 
   History, 
   Settings,
-  Globe,
   Moon,
   Sun,
   X,
@@ -50,35 +49,28 @@ export const DashboardSidebar = () => {
       {/* Mobile Top Bar */}
       {isMobile && (
         <div className="bg-card border-b border-border py-3 px-4 flex items-center justify-between fixed top-0 left-0 right-0 z-30">
-          <div className="flex items-center space-x-2">
-            <Globe className="h-5 w-5 text-lingua-500" />
-            <span className="font-bold">Lingua Connect</span>
-          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setMobileOpen(true)}
+            className="rounded-full"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
           
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="rounded-full"
-              aria-label="Toggle theme"
-            >
-              {theme === "dark" ? (
-                <Sun className="h-4 w-4" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
-            </Button>
-            
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setMobileOpen(true)}
-              className="rounded-full md:hidden"
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="rounded-full"
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
+          </Button>
         </div>
       )}
     
@@ -102,17 +94,23 @@ export const DashboardSidebar = () => {
         )}
       >
         <div className="p-4 flex items-center justify-between border-b border-border">
-          <div className="flex items-center">
-            <Globe className="h-6 w-6 text-lingua-500" />
-            <span className="ml-2 font-bold text-lg">Lingua Connect</span>
-          </div>
+          {!isMobile && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="rounded-full"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+          )}
           
           {isMobile && (
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => setMobileOpen(false)}
-              className="rounded-full"
+              className="rounded-full ml-auto"
             >
               <X className="h-4 w-4" />
             </Button>
