@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { Toaster } from "sonner";
@@ -16,6 +17,12 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { toast } from "sonner";
+import { 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/card";
 
 const History = () => {
   const isMobile = useIsMobile();
