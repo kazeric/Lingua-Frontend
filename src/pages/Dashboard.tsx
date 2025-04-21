@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { TranslationPanel } from "@/components/dashboard/TranslationPanel";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
