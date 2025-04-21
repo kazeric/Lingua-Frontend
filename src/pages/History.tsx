@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { Toaster } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Clock, Languages, MoreVertical, Trash2 } from "lucide-react";
+import { Clock, Languages, Trash2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
 import { SectionTitleBar } from "@/components/SectionTitleBar";
@@ -18,18 +18,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { 
   Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
+  CardContent
 } from "@/components/ui/card";
 
 const History = () => {
@@ -71,24 +63,17 @@ const History = () => {
   };
   
   const dashboardTranslations = historyItems.filter(item => item.fromDashboard);
-  
+
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       <DashboardSidebar />
-      
       <main className="flex-1 flex flex-col overflow-y-auto">
-        <div className="container mx-auto p-4 md:p-6 h-full flex flex-col">
-          {isMobile ? (
-            <div className="mt-2 mb-6">
-              <SectionTitleBar title="Translation History" />
-            </div>
-          ) : (
-            <h1 className="text-2xl font-bold mt-16 mb-6">
+        <div className="container mx-auto p-4 md:p-6 h-full flex flex-col max-w-5xl">
+          {/* Header: Consistent Alignment and Button Placement */}
+          <div className="flex items-center justify-between mb-6 mt-10">
+            <h1 className="text-2xl font-bold">
               Translation History
             </h1>
-          )}
-          
-          <div className="flex justify-end mb-6">
             {dashboardTranslations.length > 0 && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -114,7 +99,7 @@ const History = () => {
               </AlertDialog>
             )}
           </div>
-          
+
           <div className="grid gap-4">
             {dashboardTranslations.map((item) => (
               <Card key={item.id} className="transition-all hover:shadow-md">
@@ -134,28 +119,17 @@ const History = () => {
                         </div>
                       </div>
                     </div>
-                    
+                    {/* Only show the delete (trash) icon */}
                     <div className="flex items-center">
                       <Button 
                         variant="ghost" 
                         size="icon" 
                         className="h-8 w-8"
                         onClick={() => handleDeleteItem(item.id)}
+                        aria-label="Delete translation from history"
                       >
                         <Trash2 className="h-4 w-4 text-muted-foreground" />
                       </Button>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreVertical className="h-4 w-4 text-muted-foreground" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleDeleteItem(item.id)}>
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
                     </div>
                   </div>
                   
@@ -186,7 +160,6 @@ const History = () => {
           )}
         </div>
       </main>
-      
       <Toaster position="top-right" />
     </div>
   );
