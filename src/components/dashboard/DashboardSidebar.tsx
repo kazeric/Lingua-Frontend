@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
@@ -46,19 +45,9 @@ export const DashboardSidebar = () => {
 
   return (
     <>
-      {/* Mobile Top Bar - Removed as it's now redundant with SectionTitleBar */}
-      
-      {/* Mobile Overlay */}
-      {isMobile && mobileOpen && (
-        <div 
-          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40"
-          onClick={() => setMobileOpen(false)}
-        />
-      )}
-      
-      {/* Mobile Menu Toggle Button - Moved to SectionTitleBar */}
+      {/* Mobile Top Bar */}
       {isMobile && (
-        <div className="fixed z-50 top-3 left-4">
+        <div className="bg-card border-b border-border py-3 px-4 flex items-center justify-between fixed top-0 left-0 right-0 z-30">
           <Button
             variant="ghost"
             size="icon"
@@ -67,7 +56,34 @@ export const DashboardSidebar = () => {
           >
             <Menu className="h-5 w-5" />
           </Button>
+          
+          <div className="flex items-center gap-2">
+            <Globe className="h-5 w-5 text-lingua-500" />
+            <span className="font-medium">Translation Dashboard</span>
+          </div>
+          
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="rounded-full"
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
+          </Button>
         </div>
+      )}
+    
+      {/* Mobile Overlay */}
+      {isMobile && mobileOpen && (
+        <div 
+          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40"
+          onClick={() => setMobileOpen(false)}
+        />
       )}
       
       {/* Sidebar */}
@@ -140,7 +156,8 @@ export const DashboardSidebar = () => {
         )}
       </aside>
       
-      {/* Page Content Spacer for Mobile - Removed as it's handled differently now */}
+      {/* Page Content Spacer for Mobile */}
+      {isMobile && <div className="h-14" />}
     </>
   );
 };
