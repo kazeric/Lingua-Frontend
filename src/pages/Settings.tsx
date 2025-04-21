@@ -11,6 +11,7 @@ import { Globe, Bell, Moon, Sun, User, Lock, Save } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
+import { SectionTitleBar } from "@/components/SectionTitleBar";
 
 const Settings = () => {
   const { theme, setTheme } = useTheme();
@@ -22,24 +23,21 @@ const Settings = () => {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    // Save auto-translate preference to localStorage
     localStorage.setItem('autoTranslate', String(autoTranslate));
   }, [autoTranslate]);
 
   const handleSaveSettings = () => {
     toast.success("Settings saved successfully!");
   };
-  
+
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       <DashboardSidebar />
-      
+
       <main className="flex-1 flex flex-col overflow-y-auto">
+        <SectionTitleBar />
         <div className="container mx-auto p-4 md:p-6 max-w-5xl">
-          <h1 className={`text-2xl font-bold mb-6 ${isMobile ? "mt-10" : ""}`}>Settings</h1>
-          
           <div className="grid gap-6">
-            {/* Appearance Settings */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -73,7 +71,6 @@ const Settings = () => {
               </CardContent>
             </Card>
 
-            {/* Language Settings */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -101,7 +98,6 @@ const Settings = () => {
               </CardContent>
             </Card>
             
-            {/* Privacy Settings */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -143,7 +139,6 @@ const Settings = () => {
               </CardContent>
             </Card>
             
-            {/* Account Settings (placeholder for future) */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -173,7 +168,7 @@ const Settings = () => {
           </div>
         </div>
       </main>
-      
+
       <Toaster position="top-right" />
     </div>
   );

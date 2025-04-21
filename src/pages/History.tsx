@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { Toaster } from "sonner";
@@ -30,6 +29,7 @@ import {
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card";
+import { SectionTitleBar } from "@/components/SectionTitleBar";
 
 const History = () => {
   const navigate = useNavigate();
@@ -76,12 +76,9 @@ const History = () => {
       <DashboardSidebar />
       
       <main className="flex-1 flex flex-col overflow-y-auto">
+        <SectionTitleBar />
         <div className="container mx-auto p-4 md:p-6 h-full flex flex-col">
-          <h1 className={`text-2xl font-bold mt-16 mb-6 ${isMobile ? "mt-20" : ""}`}>
-            Translation History
-          </h1>
-          
-          <div className="flex justify-end mb-6">
+          <div className="flex items-center justify-between mt-3 mb-6">
             {dashboardTranslations.length > 0 && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -137,18 +134,6 @@ const History = () => {
                       >
                         <Trash2 className="h-4 w-4 text-muted-foreground" />
                       </Button>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreVertical className="h-4 w-4 text-muted-foreground" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleDeleteItem(item.id)}>
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
                     </div>
                   </div>
                   
