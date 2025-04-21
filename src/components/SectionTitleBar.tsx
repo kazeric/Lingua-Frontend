@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { translate, history, settings } from "lucide-react";
+import { Translate, History, Settings } from "lucide-react";
 
 type SectionConfig = {
   icon: React.ReactNode;
@@ -10,15 +10,15 @@ type SectionConfig = {
 
 const sectionMap: Record<string, SectionConfig> = {
   "/dashboard": {
-    icon: React.createElement(translate, { className: "h-6 w-6 text-lingua-500" }),
+    icon: React.createElement(Translate, { className: "h-6 w-6 text-lingua-500" }),
     title: "Translation Dashboard",
   },
   "/history": {
-    icon: React.createElement(history, { className: "h-6 w-6 text-lingua-500" }),
+    icon: React.createElement(History, { className: "h-6 w-6 text-lingua-500" }),
     title: "Translation History",
   },
   "/settings": {
-    icon: React.createElement(settings, { className: "h-6 w-6 text-lingua-500" }),
+    icon: React.createElement(Settings, { className: "h-6 w-6 text-lingua-500" }),
     title: "Settings",
   },
 };
