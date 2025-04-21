@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Clock, Languages, Trash2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
-import { SectionTitleBar } from "@/components/SectionTitleBar";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,8 +18,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { 
-  Card, 
+import {
+  Card,
   CardContent
 } from "@/components/ui/card";
 
@@ -28,21 +27,21 @@ const History = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [historyItems, setHistoryItems] = useState([
-    { 
-      id: 1, 
-      sourceText: "irrigation system", 
-      translatedText: "mfumo wa kumwagiza", 
-      sourceLang: "English", 
-      targetLang: "Giriama", 
+    {
+      id: 1,
+      sourceText: "irrigation system",
+      translatedText: "mfumo wa kumwagiza",
+      sourceLang: "English",
+      targetLang: "Giriama",
       date: "2024-04-07 10:23",
       fromDashboard: true
     },
-    { 
-      id: 2, 
-      sourceText: "crop rotation", 
-      translatedText: "kugaluza mimea", 
-      sourceLang: "English", 
-      targetLang: "Giriama", 
+    {
+      id: 2,
+      sourceText: "crop rotation",
+      translatedText: "kugaluza mimea",
+      sourceLang: "English",
+      targetLang: "Giriama",
       date: "2024-04-06 15:45",
       fromDashboard: true
     }
@@ -61,7 +60,7 @@ const History = () => {
   const handleStartTranslating = () => {
     navigate("/dashboard");
   };
-  
+
   const dashboardTranslations = historyItems.filter(item => item.fromDashboard);
 
   return (
@@ -132,7 +131,7 @@ const History = () => {
                       </Button>
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                     <div className="bg-muted/30 p-3 rounded-md">
                       <p className="text-sm text-muted-foreground mb-1">Original:</p>
@@ -147,7 +146,7 @@ const History = () => {
               </Card>
             ))}
           </div>
-          
+
           {dashboardTranslations.length === 0 && (
             <div className="flex flex-col items-center justify-center flex-1 text-center">
               <Clock className="h-12 w-12 text-muted-foreground mb-4" />

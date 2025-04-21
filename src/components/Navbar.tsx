@@ -4,10 +4,12 @@ import { Menu, X, Globe } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,7 +31,9 @@ const Navbar = () => {
         <div className="flex items-center justify-between">
           <div className={`flex items-center space-x-2 animate-fade-in ${isMobileMenuOpen ? 'z-20' : ''}`}>
             <Globe className="h-6 w-6 text-lingua-500" />
-            <span className="font-bold text-xl">Lingua Connect</span>
+            <span className="font-bold text-xl">
+              {isMobile ? "Lingua Connect" : "Lingua Connect"}
+            </span>
           </div>
 
           {/* Desktop Navigation */}
