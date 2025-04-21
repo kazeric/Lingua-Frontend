@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { Toaster } from "sonner";
@@ -36,7 +37,7 @@ const Settings = () => {
       
       <main className="flex-1 flex flex-col overflow-y-auto">
         <div className="container mx-auto p-4 md:p-6 max-w-5xl">
-          <h1 className={`text-2xl font-bold mb-6 ${isMobile ? "mt-10" : ""}`}>Settings</h1>
+          <h1 className={`text-2xl font-bold mb-6 ${isMobile ? "mt-16" : ""}`}>Settings</h1>
           
           <div className="grid gap-6">
             {/* Appearance Settings */}

@@ -18,7 +18,7 @@ const Dashboard = () => {
         <div className="h-full flex flex-col">
           {isMobile && (
             <div className="p-4">
-              <SectionTitleBar title="Translation Dashboard" />
+              <SectionTitleBar title="Translation Dashboard" className="mt-12" />
             </div>
           )}
           <TranslationPanel isExpanded={isExpanded} setIsExpanded={setIsExpanded} />

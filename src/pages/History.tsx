@@ -70,7 +70,7 @@ const History = () => {
       <main className="flex-1 flex flex-col overflow-y-auto">
         <div className="container mx-auto p-4 md:p-6 h-full flex flex-col max-w-5xl">
           {/* Header: Consistent Alignment and Button Placement */}
-          <div className="flex items-center justify-between mb-6 mt-10">
+          <div className={`flex items-center justify-between mb-6 ${isMobile ? "mt-16" : "mt-10"}`}>
             <h1 className="text-2xl font-bold">
               Translation History
             </h1>
