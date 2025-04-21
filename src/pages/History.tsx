@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Clock, Languages, MoreVertical, Trash2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
+import { SectionTitleBar } from "@/components/SectionTitleBar";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -77,9 +78,15 @@ const History = () => {
       
       <main className="flex-1 flex flex-col overflow-y-auto">
         <div className="container mx-auto p-4 md:p-6 h-full flex flex-col">
-          <h1 className={`text-2xl font-bold mt-16 mb-6 ${isMobile ? "mt-20" : ""}`}>
-            Translation History
-          </h1>
+          {isMobile ? (
+            <div className="mt-2 mb-6">
+              <SectionTitleBar title="Translation History" />
+            </div>
+          ) : (
+            <h1 className="text-2xl font-bold mt-16 mb-6">
+              Translation History
+            </h1>
+          )}
           
           <div className="flex justify-end mb-6">
             {dashboardTranslations.length > 0 && (
