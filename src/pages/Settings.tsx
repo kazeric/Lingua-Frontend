@@ -1,10 +1,20 @@
+
 import React, { useState, useEffect } from "react";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { Toaster } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Moon, Sun, Globe, Lock, User, Save } from "lucide-react";
+import { useTheme } from "next-themes";
+import { toast } from "sonner";
 
 const Settings = () => {
   const isMobile = useIsMobile();
+  const { theme, setTheme } = useTheme();
 
   const [autoTranslate, setAutoTranslate] = useState(false);
   const [saveHistory, setSaveHistory] = useState(true);
