@@ -18,10 +18,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import {
-  Card,
-  CardContent
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 const History = () => {
   const navigate = useNavigate();
@@ -33,7 +30,7 @@ const History = () => {
       translatedText: "mfumo wa kumwagiza",
       sourceLang: "English",
       targetLang: "Giriama",
-      date: "2024-04-07 10:23",
+      date: new Date().toISOString(),
       fromDashboard: true
     },
     {
@@ -42,7 +39,7 @@ const History = () => {
       translatedText: "kugaluza mimea",
       sourceLang: "English",
       targetLang: "Giriama",
-      date: "2024-04-06 15:45",
+      date: new Date().toISOString(),
       fromDashboard: true
     }
   ]);
@@ -61,6 +58,18 @@ const History = () => {
     navigate("/dashboard");
   };
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
   const dashboardTranslations = historyItems.filter(item => item.fromDashboard);
 
   return (
@@ -68,7 +77,6 @@ const History = () => {
       <DashboardSidebar />
       <main className="flex-1 flex flex-col overflow-y-auto">
         <div className="container mx-auto p-4 md:p-6 h-full flex flex-col max-w-5xl">
-          {/* Header: Consistent Alignment and Button Placement */}
           <div className={`flex items-center justify-between mb-6 ${isMobile ? "mt-16" : "mt-10"}`}>
             <h1 className="text-2xl font-bold">
               Translation History
@@ -76,9 +84,13 @@ const History = () => {
             {dashboardTranslations.length > 0 && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="outline" className="gap-2">
+                  <Button 
+                    variant="outline" 
+                    className="gap-2"
+                    size={isMobile ? "icon" : "default"}
+                  >
                     <Trash2 className="h-4 w-4" />
-                    Delete All
+                    {!isMobile && "Delete All"}
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
@@ -103,8 +115,8 @@ const History = () => {
             {dashboardTranslations.map((item) => (
               <Card key={item.id} className="transition-all hover:shadow-md">
                 <CardContent className="p-4">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
-                    <div className="flex items-center mb-2 md:mb-0">
+                  <div className="flex flex-row items-center justify-between mb-4">
+                    <div className="flex items-center">
                       <div className="bg-lingua-100 dark:bg-lingua-900/30 p-2 rounded-full mr-3">
                         <Languages className="h-5 w-5 text-lingua-500" />
                       </div>
@@ -114,22 +126,19 @@ const History = () => {
                         </p>
                         <div className="flex items-center text-xs text-muted-foreground">
                           <Clock className="h-3 w-3 mr-1" />
-                          <span>{item.date}</span>
+                          <span>{formatDate(item.date)}</span>
                         </div>
                       </div>
                     </div>
-                    {/* Only show the delete (trash) icon */}
-                    <div className="flex items-center">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8"
-                        onClick={() => handleDeleteItem(item.id)}
-                        aria-label="Delete translation from history"
-                      >
-                        <Trash2 className="h-4 w-4 text-muted-foreground" />
-                      </Button>
-                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 ml-2"
+                      onClick={() => handleDeleteItem(item.id)}
+                      aria-label="Delete translation from history"
+                    >
+                      <Trash2 className="h-4 w-4 text-muted-foreground" />
+                    </Button>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
