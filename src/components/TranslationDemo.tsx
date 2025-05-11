@@ -11,7 +11,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { translateText, speechToText, textToSpeech, saveToHistory } from "@/utils/translation-services";
+import { 
+  translateText,
+  speechToText,
+  textToSpeech,
+  saveToHistory
+} from "@/utils/translation";
 
 const agriculturalTerms = [
   "irrigation system",
