@@ -1,4 +1,3 @@
-
 // translation-services.ts - Handles API calls to translation services
 
 // Types for the translation services
@@ -32,22 +31,22 @@ interface HistoryItem {
 // Configuration object to store model endpoints
 const MODEL_CONFIG = {
   translation: {
-    "en-gir": process.env.EN_TO_GIRIAMA_API_URL || "/api/translate/en-to-gir", 
-    "gir-en": process.env.GIRIAMA_TO_EN_API_URL || "/api/translate/gir-to-en",
+    "en-gir": import.meta.env.VITE_EN_TO_GIRIAMA_API_URL || "/api/translate/en-to-gir", 
+    "gir-en": import.meta.env.VITE_GIRIAMA_TO_EN_API_URL || "/api/translate/gir-to-en",
   },
   asr: {
     en: {
       type: "google",
-      apiKey: process.env.GOOGLE_ASR_API_KEY || "",
+      apiKey: import.meta.env.VITE_GOOGLE_ASR_API_KEY || "",
     },
-    gir: process.env.GIRIAMA_ASR_API_URL || "/api/asr-giriama", 
+    gir: import.meta.env.VITE_GIRIAMA_ASR_API_URL || "/api/asr-giriama", 
   },
   tts: {
     en: {
       type: "google", 
-      apiKey: process.env.GOOGLE_TTS_API_KEY || "",
+      apiKey: import.meta.env.VITE_GOOGLE_TTS_API_KEY || "",
     },
-    gir: process.env.GIRIAMA_TTS_API_URL || "/api/tts-giriama",
+    gir: import.meta.env.VITE_GIRIAMA_TTS_API_URL || "/api/tts-giriama",
   }
 };
 
