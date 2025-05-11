@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { Toaster } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -7,8 +7,7 @@ import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Moon, Sun, Globe, Lock, User, Save } from "lucide-react";
+import { Moon, Sun, Lock, Save } from "lucide-react";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
 
@@ -16,16 +15,8 @@ const Settings = () => {
   const isMobile = useIsMobile();
   const { theme, setTheme } = useTheme();
 
-  const [autoTranslate, setAutoTranslate] = useState(false);
   const [saveHistory, setSaveHistory] = useState(true);
   const [notifications, setNotifications] = useState(true);
-  const [defaultSourceLang, setDefaultSourceLang] = useState("en");
-  const [defaultTargetLang, setDefaultTargetLang] = useState("gir");
-
-  useEffect(() => {
-    // Save auto-translate preference to localStorage
-    localStorage.setItem('autoTranslate', String(autoTranslate));
-  }, [autoTranslate]);
 
   const handleSaveSettings = () => {
     toast.success("Settings saved successfully!");
@@ -73,34 +64,6 @@ const Settings = () => {
                 </div>
               </CardContent>
             </Card>
-
-            {/* Language Settings */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Globe className="h-5 w-5" />
-                  Translation Preferences
-                </CardTitle>
-                <CardDescription>
-                  Configure your translation behavior
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="auto-translate">Auto-Translate</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Automatically translate as you type
-                    </p>
-                  </div>
-                  <Switch 
-                    id="auto-translate" 
-                    checked={autoTranslate}
-                    onCheckedChange={setAutoTranslate}
-                  />
-                </div>
-              </CardContent>
-            </Card>
             
             {/* Privacy Settings */}
             <Card>
@@ -141,28 +104,6 @@ const Settings = () => {
                     onCheckedChange={setNotifications}
                   />
                 </div>
-              </CardContent>
-            </Card>
-            
-            {/* Account Settings (placeholder for future) */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5" />
-                  Account Settings
-                </CardTitle>
-                <CardDescription>
-                  Manage your account details and preferences
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="your.email@example.com" />
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Account settings will be available in future updates
-                </p>
               </CardContent>
               <CardFooter>
                 <Button className="w-full md:w-auto" onClick={handleSaveSettings}>
