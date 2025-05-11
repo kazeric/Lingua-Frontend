@@ -1,9 +1,9 @@
-
 import React, { useState, useRef } from "react";
-import { ArrowRight, MicIcon, RefreshCcwIcon, Volume2 } from "lucide-react";
+import { ArrowRight, MicIcon, RefreshCwIcon, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import { 
   Select,
   SelectContent,
@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { translateText, speechToText, textToSpeech } from "@/utils/translation-services";
+import { translateText, speechToText, textToSpeech, saveToHistory } from "@/utils/translation-services";
 
 const agriculturalTerms = [
   "irrigation system",
@@ -63,6 +63,16 @@ const TranslationDemo = () => {
         });
         
         setOutputText(translatedText);
+        
+        // Save to history as a demo translation
+        saveToHistory(
+          term,
+          translatedText,
+          sourceLanguage === "en" ? "English" : "Giriama",
+          targetLanguage === "nyf" ? "Giriama" : "English",
+          false, // fromDashboard is false
+          true   // isDemo is true
+        );
       } catch (error) {
         console.error("Translation error:", error);
         
@@ -103,9 +113,11 @@ const TranslationDemo = () => {
       
       if (transcription) {
         setInputText(transcription);
+        toast.success("Voice input captured!");
       }
     } catch (error) {
       console.error("Voice input error:", error);
+      toast.error("Speech recognition failed. Please try again.");
     } finally {
       setIsListening(false);
     }
@@ -136,6 +148,7 @@ const TranslationDemo = () => {
       }
     } catch (error) {
       console.error("Text-to-speech error:", error);
+      toast.error("Audio playback failed. Please try again.");
       setIsPlaying(false);
     }
   };
@@ -252,7 +265,7 @@ const TranslationDemo = () => {
                 <div className="h-40 bg-muted/30 border border-border rounded-md p-3 overflow-auto">
                   {isTranslating ? (
                     <div className="h-full flex items-center justify-center">
-                      <RefreshCcwIcon className="h-6 w-6 text-muted-foreground animate-spin" />
+                      <RefreshCwIcon className="h-6 w-6 text-muted-foreground animate-spin" />
                     </div>
                   ) : (
                     <p className="text-base">{outputText}</p>

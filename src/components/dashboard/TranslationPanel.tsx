@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { ArrowRight, ArrowLeft, Mic, MicOff, Volume2, Expand, Minimize, RefreshCcw, Languages } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { translateText, speechToText, textToSpeech } from "@/utils/translation-services";
+import { translateText, speechToText, textToSpeech, saveToHistory } from "@/utils/translation-services";
 
 interface TranslationPanelProps {
   isExpanded: boolean;
@@ -86,23 +85,14 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
       setOutputText(translationResult);
       toast.success("Translation complete!");
       
-      // Store translation in history
-      const newTranslationHistory = {
-        id: Date.now(),
-        sourceText: inputText,
-        translatedText: translationResult,
-        sourceLang: getLanguageName(sourceLanguage),
-        targetLang: getLanguageName(targetLanguage),
-        date: new Date().toISOString(),
-        fromDashboard: true
-      };
-      
-      // Get existing history
-      const existingHistory = JSON.parse(localStorage.getItem('translationHistory') || '[]');
-      
-      // Add new item and save
-      localStorage.setItem('translationHistory', 
-        JSON.stringify([newTranslationHistory, ...existingHistory])
+      // Save translation to history
+      saveToHistory(
+        inputText,
+        translationResult,
+        getLanguageName(sourceLanguage),
+        getLanguageName(targetLanguage),
+        true,  // fromDashboard is true
+        false  // isDemo is false
       );
       
     } catch (error) {

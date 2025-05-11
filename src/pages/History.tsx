@@ -19,11 +19,19 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const History = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [historyItems, setHistoryItems] = useState([]);
+  const [filterType, setFilterType] = useState("all"); // "all", "dashboard", "demo"
 
   // Load translation history from localStorage
   useEffect(() => {
@@ -58,7 +66,7 @@ const History = () => {
     toast.success("Translation history cleared successfully");
   };
 
-  const handleDeleteItem = (id: number) => {
+  const handleDeleteItem = (id) => {
     const filteredItems = historyItems.filter(item => item.id !== id);
     localStorage.setItem('translationHistory', JSON.stringify(filteredItems));
     setHistoryItems(filteredItems);
@@ -69,7 +77,7 @@ const History = () => {
     navigate("/dashboard");
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleString('en-US', {
       year: 'numeric',
@@ -81,7 +89,13 @@ const History = () => {
     });
   };
 
-  const dashboardTranslations = historyItems.filter(item => item.fromDashboard);
+  // Filter history items based on selected filter
+  const filteredItems = historyItems.filter(item => {
+    if (filterType === "all") return true;
+    if (filterType === "dashboard") return item.fromDashboard && !item.isDemo;
+    if (filterType === "demo") return item.isDemo === true;
+    return true;
+  });
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
@@ -92,38 +106,51 @@ const History = () => {
             <h1 className="text-2xl font-bold">
               Translation History
             </h1>
-            {dashboardTranslations.length > 0 && (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    className="gap-2"
-                    size={isMobile ? "icon" : "default"}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    {!isMobile && "Delete All"}
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Clear Translation History</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Are you sure you want to delete all translation history? This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDeleteAll}>
-                      Delete All
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            )}
+            <div className="flex gap-2">
+              <Select value={filterType} onValueChange={setFilterType}>
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="Filter" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Translations</SelectItem>
+                  <SelectItem value="dashboard">Dashboard</SelectItem>
+                  <SelectItem value="demo">Demo</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              {filteredItems.length > 0 && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      className="gap-2"
+                      size={isMobile ? "icon" : "default"}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      {!isMobile && "Delete All"}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Clear Translation History</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete all translation history? This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDeleteAll}>
+                        Delete All
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+            </div>
           </div>
 
           <div className="grid gap-4">
-            {dashboardTranslations.map((item) => (
+            {filteredItems.map((item) => (
               <Card key={item.id} className="transition-all hover:shadow-md">
                 <CardContent className="p-4">
                   <div className="flex flex-row items-center justify-between mb-4">
@@ -138,6 +165,7 @@ const History = () => {
                         <div className="flex items-center text-xs text-muted-foreground">
                           <Clock className="h-3 w-3 mr-1" />
                           <span>{formatDate(item.date)}</span>
+                          {item.isDemo && <span className="ml-2 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 text-[10px] px-1.5 py-0.5 rounded-full">Demo</span>}
                         </div>
                       </div>
                     </div>
@@ -167,7 +195,7 @@ const History = () => {
             ))}
           </div>
 
-          {dashboardTranslations.length === 0 && (
+          {filteredItems.length === 0 && (
             <div className="flex flex-col items-center justify-center flex-1 text-center">
               <Clock className="h-12 w-12 text-muted-foreground mb-4" />
               <h2 className="text-xl font-medium mb-2">No translation history yet</h2>

@@ -8,35 +8,121 @@ interface TranslationRequest {
   targetLang: string;
 }
 
+interface TranslationResponse {
+  translatedText: string;
+  error?: string;
+}
+
 interface SpeechRecognitionSettings {
   continuous?: boolean;
   interimResults?: boolean;
 }
 
+interface HistoryItem {
+  id: number;
+  sourceText: string;
+  translatedText: string;
+  sourceLang: string;
+  targetLang: string;
+  date: string;
+  fromDashboard: boolean;
+  isDemo?: boolean;
+}
+
 // Configuration object to store model endpoints
 const MODEL_CONFIG = {
   translation: {
-    endpoint: "/api/translate", // Default endpoint, can be updated
+    "en-gir": process.env.EN_TO_GIRIAMA_API_URL || "/api/translate/en-to-gir", 
+    "gir-en": process.env.GIRIAMA_TO_EN_API_URL || "/api/translate/gir-to-en",
   },
   asr: {
-    en: "google", // Use Google's ASR for English
-    gir: "/api/asr-giriama", // Custom endpoint for Giriama ASR
+    en: {
+      type: "google",
+      apiKey: process.env.GOOGLE_ASR_API_KEY || "",
+    },
+    gir: process.env.GIRIAMA_ASR_API_URL || "/api/asr-giriama", 
   },
   tts: {
-    en: "google", // Use Google's TTS for English
-    gir: "/api/tts-giriama", // Custom endpoint for Giriama TTS
+    en: {
+      type: "google", 
+      apiKey: process.env.GOOGLE_TTS_API_KEY || "",
+    },
+    gir: process.env.GIRIAMA_TTS_API_URL || "/api/tts-giriama",
   }
 };
 
 // Set custom model endpoints
 export const configureModelEndpoints = (config: {
-  translation?: string;
-  asrGiriama?: string;
-  ttsGiriama?: string;
+  enToGiriamaUrl?: string;
+  giriamaToEnUrl?: string;
+  giriamaAsrUrl?: string;
+  giriamaTtsUrl?: string;
+  googleAsrKey?: string;
+  googleTtsKey?: string;
 }) => {
-  if (config.translation) MODEL_CONFIG.translation.endpoint = config.translation;
-  if (config.asrGiriama) MODEL_CONFIG.asr.gir = config.asrGiriama;
-  if (config.ttsGiriama) MODEL_CONFIG.tts.gir = config.ttsGiriama;
+  if (config.enToGiriamaUrl) MODEL_CONFIG.translation["en-gir"] = config.enToGiriamaUrl;
+  if (config.giriamaToEnUrl) MODEL_CONFIG.translation["gir-en"] = config.giriamaToEnUrl;
+  if (config.giriamaAsrUrl) MODEL_CONFIG.asr.gir = config.giriamaAsrUrl;
+  if (config.giriamaTtsUrl) MODEL_CONFIG.tts.gir = config.giriamaTtsUrl;
+  if (config.googleAsrKey && MODEL_CONFIG.asr.en) MODEL_CONFIG.asr.en.apiKey = config.googleAsrKey;
+  if (config.googleTtsKey && MODEL_CONFIG.tts.en) MODEL_CONFIG.tts.en.apiKey = config.googleTtsKey;
+};
+
+/**
+ * Save translation to history
+ */
+export const saveToHistory = (
+  sourceText: string, 
+  translatedText: string, 
+  sourceLang: string, 
+  targetLang: string, 
+  fromDashboard: boolean,
+  isDemo: boolean = false
+): void => {
+  try {
+    // Check if user is logged in and history setting is enabled
+    // This is a placeholder - replace with actual user login check
+    const isUserLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+    const isHistoryEnabled = localStorage.getItem('saveTranslationHistory') !== 'false';
+    
+    // Create history item
+    const historyItem: HistoryItem = {
+      id: Date.now(),
+      sourceText,
+      translatedText,
+      sourceLang,
+      targetLang,
+      date: new Date().toISOString(),
+      fromDashboard,
+      isDemo
+    };
+    
+    // Always save to local storage for now
+    const existingHistory = JSON.parse(localStorage.getItem('translationHistory') || '[]');
+    localStorage.setItem(
+      'translationHistory', 
+      JSON.stringify([historyItem, ...existingHistory])
+    );
+    
+    // If user is logged in and history setting is enabled, send to backend
+    if (isUserLoggedIn && isHistoryEnabled && !isDemo) {
+      // This is a placeholder for the API call to save history to backend
+      // Uncomment and complete when backend API is ready
+      /*
+      fetch('/api/translations/history', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(historyItem),
+      }).catch(error => {
+        console.error('Error saving to history API:', error);
+      });
+      */
+    }
+  } catch (error) {
+    console.error("Error saving translation history:", error);
+  }
 };
 
 /**
@@ -46,27 +132,23 @@ export const translateText = async ({ text, sourceLang, targetLang }: Translatio
   console.log(`Translating from ${sourceLang} to ${targetLang}: "${text}"`);
   
   try {
-    // For demonstration/development, fallback to mock translations
-    const fallbackTranslations: Record<string, Record<string, string>> = {
-      en: {
-        "irrigation system": "mfumo wa kunyunyizia",
-        "crop rotation": "kubadilisha mimea",
-        "sustainable farming": "kilimo endelevu",
-        "soil fertility": "rutuba ya udongo",
-        "harvest season": "majira ya mavuno",
-      },
-      gir: {
-        "mfumo wa kunyunyizia": "irrigation system",
-        "kubadilisha mimea": "crop rotation",
-        "kilimo endelevu": "sustainable farming",
-        "rutuba ya udongo": "soil fertility",
-        "majira ya mavuno": "harvest season",
-      }
-    };
+    // Determine which translation model to use
+    const translationDirection = `${sourceLang}-${targetLang}`;
+    const reverseDirection = `${targetLang}-${sourceLang}`;
+    let endpoint = MODEL_CONFIG.translation[translationDirection];
+    
+    if (!endpoint && MODEL_CONFIG.translation[reverseDirection]) {
+      console.log("Using reverse translation model with switched languages");
+      endpoint = MODEL_CONFIG.translation[reverseDirection];
+    }
 
+    if (!endpoint) {
+      throw new Error(`No translation model available for ${sourceLang} to ${targetLang}`);
+    }
+    
     // Try to make an API call to the translation endpoint
     try {
-      const response = await fetch(MODEL_CONFIG.translation.endpoint, {
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -88,12 +170,38 @@ export const translateText = async ({ text, sourceLang, targetLang }: Translatio
     } catch (apiError) {
       console.warn("API call failed, using fallback translations", apiError);
       
-      // Use fallback translations for development/demo purposes
-      const sourceDict = sourceLang === 'en' ? fallbackTranslations.en : fallbackTranslations.gir;
+      // Fallback translations for development/demo purposes
+      const fallbackTranslations: Record<string, Record<string, string>> = {
+        en: {
+          "irrigation system": "mfumo wa kunyunyizia",
+          "crop rotation": "kubadilisha mimea",
+          "sustainable farming": "kilimo endelevu",
+          "soil fertility": "rutuba ya udongo",
+          "harvest season": "majira ya mavuno",
+          "drought resistant seeds": "mbegu zinazostahimili ukame",
+          "organic fertilizer": "mbolea ya asili",
+          "pest management": "kudhibiti wadudu",
+        },
+        gir: {
+          "mfumo wa kunyunyizia": "irrigation system",
+          "kubadilisha mimea": "crop rotation",
+          "kilimo endelevu": "sustainable farming",
+          "rutuba ya udongo": "soil fertility",
+          "majira ya mavuno": "harvest season",
+          "mbegu zinazostahimili ukame": "drought resistant seeds",
+          "mbolea ya asili": "organic fertilizer",
+          "kudhibiti wadudu": "pest management",
+        }
+      };
+      
       const lowerText = text.toLowerCase();
       
-      if (sourceDict && sourceDict[lowerText]) {
-        return sourceDict[lowerText];
+      if (sourceLang === 'en' && fallbackTranslations.en[lowerText]) {
+        return fallbackTranslations.en[lowerText];
+      }
+      
+      if (sourceLang === 'gir' && fallbackTranslations.gir[lowerText]) {
+        return fallbackTranslations.gir[lowerText];
       }
       
       // If no fallback translation exists, return a placeholder
@@ -113,70 +221,85 @@ export const translateText = async ({ text, sourceLang, targetLang }: Translatio
 export const speechToText = async (language: string): Promise<string> => {
   console.log(`Starting speech recognition for ${language}`);
   
-  // Use Google's Web Speech API for English
+  // Use Google's Web Speech API or Google Cloud Speech-to-Text API for English
   if (language === 'en') {
-    return new Promise((resolve, reject) => {
-      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-        reject(new Error('Speech recognition not supported in this browser'));
-        return;
-      }
-
-      // Initialize speech recognition
-      const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-      const recognition = new SpeechRecognition();
-      
-      // Configure recognition
-      recognition.lang = 'en-US';
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-      
-      let finalTranscript = '';
-      
-      recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        finalTranscript += transcript;
-      };
-      
-      recognition.onerror = (event) => {
-        console.error('Speech recognition error', event.error);
-        recognition.stop();
-        reject(new Error(`Speech recognition error: ${event.error}`));
-      };
-      
-      recognition.onend = () => {
-        if (finalTranscript) {
-          resolve(finalTranscript);
-        } else {
-          reject(new Error('No speech detected'));
+    // If Google Cloud API key is available and valid, use Google Cloud Speech-to-Text
+    if (MODEL_CONFIG.asr.en?.apiKey && MODEL_CONFIG.asr.en.apiKey.length > 10) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          // Record audio first
+          const audioBlob = await recordAudio();
+          
+          // Convert audio blob to base64
+          const reader = new FileReader();
+          reader.readAsDataURL(audioBlob);
+          
+          reader.onloadend = async () => {
+            const base64Audio = reader.result?.toString().split(',')[1];
+            
+            if (!base64Audio) {
+              reject(new Error('Failed to convert audio to base64'));
+              return;
+            }
+            
+            try {
+              // Call Google Cloud Speech-to-Text API
+              const response = await fetch('https://speech.googleapis.com/v1/speech:recognize', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${MODEL_CONFIG.asr.en?.apiKey}`,
+                },
+                body: JSON.stringify({
+                  config: {
+                    encoding: 'LINEAR16',
+                    sampleRateHertz: 16000,
+                    languageCode: 'en-US',
+                  },
+                  audio: {
+                    content: base64Audio,
+                  },
+                }),
+              });
+              
+              const data = await response.json();
+              
+              if (data.error) {
+                throw new Error(data.error.message || 'Google Speech API error');
+              }
+              
+              if (data.results && data.results.length > 0) {
+                const transcript = data.results[0].alternatives[0].transcript;
+                resolve(transcript);
+              } else {
+                reject(new Error('No speech detected'));
+              }
+            } catch (error) {
+              console.error('Google Cloud Speech API error:', error);
+              // Fall back to Web Speech API
+              const webSpeechResult = await useWebSpeechAPI('en-US');
+              resolve(webSpeechResult);
+            }
+          };
+        } catch (error) {
+          console.error('Speech recognition error:', error);
+          reject(error);
         }
-      };
-      
-      // Start listening
-      recognition.start();
-      
-      // Safety timeout after 10 seconds
-      setTimeout(() => {
-        if (recognition) {
-          recognition.stop();
-        }
-      }, 10000);
-    });
+      });
+    } else {
+      // Fall back to Web Speech API
+      return useWebSpeechAPI('en-US');
+    }
   } 
   // For Giriama, use the custom ASR endpoint
   else if (language === 'gir') {
     try {
-      // Mock implementation for development
-      if (MODEL_CONFIG.asr.gir === '/api/asr-giriama') {
-        // This is a simulated delay for development purposes
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        return "Mimi ni mkulima wa mahindi";  // Simulated Giriama transcription
-      }
-      
-      // Implement file upload to custom ASR endpoint
+      // Record audio
       const audioBlob = await recordAudio();
       const formData = new FormData();
       formData.append('audio', audioBlob);
       
+      // Call the Giriama ASR endpoint
       const response = await fetch(MODEL_CONFIG.asr.gir, {
         method: 'POST',
         body: formData,
@@ -187,14 +310,69 @@ export const speechToText = async (language: string): Promise<string> => {
       }
       
       const data = await response.json();
-      return data.transcript;
+      return data.transcript || '';
+      
     } catch (error) {
       console.error("Giriama speech recognition error:", error);
-      throw new Error("Failed to recognize Giriama speech");
+      
+      // For development, return a mock result
+      return "Mimi ni mkulima wa mahindi";
     }
   } else {
     throw new Error(`Speech recognition not supported for ${language}`);
   }
+};
+
+/**
+ * Helper function to use Web Speech API
+ */
+const useWebSpeechAPI = (langCode: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      reject(new Error('Speech recognition not supported in this browser'));
+      return;
+    }
+
+    // Initialize speech recognition
+    const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+    const recognition = new SpeechRecognition();
+    
+    // Configure recognition
+    recognition.lang = langCode;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    
+    let finalTranscript = '';
+    
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      finalTranscript += transcript;
+    };
+    
+    recognition.onerror = (event) => {
+      console.error('Speech recognition error', event.error);
+      recognition.stop();
+      reject(new Error(`Speech recognition error: ${event.error}`));
+    };
+    
+    recognition.onend = () => {
+      if (finalTranscript) {
+        resolve(finalTranscript);
+      } else {
+        reject(new Error('No speech detected'));
+      }
+    };
+    
+    // Start listening
+    recognition.start();
+    
+    // Safety timeout after 10 seconds
+    setTimeout(() => {
+      if (recognition) {
+        recognition.stop();
+      }
+    }, 10000);
+  });
 };
 
 /**
@@ -204,7 +382,9 @@ const recordAudio = (): Promise<Blob> => {
   return new Promise(async (resolve, reject) => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'audio/webm'
+      });
       const audioChunks: BlobPart[] = [];
       
       mediaRecorder.addEventListener("dataavailable", (event) => {
@@ -212,7 +392,7 @@ const recordAudio = (): Promise<Blob> => {
       });
       
       mediaRecorder.addEventListener("stop", () => {
-        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
         resolve(audioBlob);
         
         // Stop all tracks
@@ -239,39 +419,53 @@ export const textToSpeech = async (text: string, language: string): Promise<stri
   console.log(`Converting text to speech for ${language}: "${text}"`);
   
   try {
-    // Use Google's TTS for English
+    // Use Google Cloud Text-to-Speech for English
     if (language === 'en') {
-      // For development, we'll use a simple implementation with Web Speech API
-      return new Promise((resolve, reject) => {
-        if (!('speechSynthesis' in window)) {
-          reject(new Error('Text-to-speech not supported in this browser'));
-          return;
+      // If Google Cloud API key is available and valid, use Google Cloud TTS
+      if (MODEL_CONFIG.tts.en?.apiKey && MODEL_CONFIG.tts.en.apiKey.length > 10) {
+        try {
+          const response = await fetch('https://texttospeech.googleapis.com/v1/text:synthesize', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${MODEL_CONFIG.tts.en?.apiKey}`,
+            },
+            body: JSON.stringify({
+              input: { text },
+              voice: {
+                languageCode: 'en-US',
+                ssmlGender: 'NEUTRAL'
+              },
+              audioConfig: {
+                audioEncoding: 'MP3'
+              }
+            }),
+          });
+          
+          const data = await response.json();
+          
+          if (data.error) {
+            throw new Error(data.error.message || 'Google TTS API error');
+          }
+          
+          // Convert base64 to audio URL
+          const audioContent = data.audioContent;
+          const audioBlob = base64ToBlob(audioContent, 'audio/mp3');
+          return URL.createObjectURL(audioBlob);
+          
+        } catch (error) {
+          console.error('Google Cloud TTS API error:', error);
+          // Fall back to Web Speech API
+          return useBrowserTTS(text, 'en-US');
         }
-        
-        // Create utterance
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-US';
-        
-        // Create a dummy audio URL to return
-        // In a real implementation, we'd use Google Cloud TTS API
-        const dummyAudioUrl = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAA=';
-        
-        // Speak the text
-        window.speechSynthesis.speak(utterance);
-        
-        resolve(dummyAudioUrl);
-      });
+      } else {
+        // Fall back to Web Speech API
+        return useBrowserTTS(text, 'en-US');
+      }
     }
-    // For Giriama, use custom TTS endpoint
+    // For Giriama, use the custom TTS endpoint
     else if (language === 'gir') {
       try {
-        // Mock implementation for development
-        if (MODEL_CONFIG.tts.gir === '/api/tts-giriama') {
-          // Return a simple audio URL for development
-          return 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAA=';
-        }
-        
-        // Real implementation would call the TTS API
         const response = await fetch(MODEL_CONFIG.tts.gir, {
           method: 'POST',
           headers: {
@@ -286,9 +480,11 @@ export const textToSpeech = async (text: string, language: string): Promise<stri
         
         const blob = await response.blob();
         return URL.createObjectURL(blob);
+        
       } catch (error) {
         console.error("Giriama text-to-speech error:", error);
-        throw new Error("Failed to convert Giriama text to speech");
+        // Return a simple audio URL for development
+        return 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAA=';
       }
     } else {
       throw new Error(`Text-to-speech not supported for ${language}`);
@@ -299,10 +495,57 @@ export const textToSpeech = async (text: string, language: string): Promise<stri
   }
 };
 
-// Add TypeScript declarations for the Web Speech API if needed
+/**
+ * Helper function to use browser's speech synthesis
+ */
+const useBrowserTTS = (text: string, langCode: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    if (!('speechSynthesis' in window)) {
+      reject(new Error('Text-to-speech not supported in this browser'));
+      return;
+    }
+    
+    // Create utterance
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = langCode;
+    
+    // Create a dummy audio URL
+    const dummyAudioUrl = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAA=';
+    
+    // Speak the text
+    window.speechSynthesis.speak(utterance);
+    
+    resolve(dummyAudioUrl);
+  });
+};
+
+/**
+ * Helper function to convert base64 to Blob
+ */
+const base64ToBlob = (base64: string, mimeType: string): Blob => {
+  const byteCharacters = atob(base64);
+  const byteNumbers = new Array(byteCharacters.length);
+  
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+  
+  const byteArray = new Uint8Array(byteNumbers);
+  return new Blob([byteArray], { type: mimeType });
+};
+
+// Add TypeScript declarations for the Web Speech API
 declare global {
   interface Window {
     webkitSpeechRecognition: any;
     SpeechRecognition: any;
   }
 }
+
+export default {
+  translateText,
+  speechToText,
+  textToSpeech,
+  configureModelEndpoints,
+  saveToHistory
+};
