@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { ArrowRight, ArrowLeft, Mic, Volume2, Expand, Minimize, RefreshCcw, Languages } from "lucide-react";
+
+import React, { useState, useEffect, useRef } from "react";
+import { ArrowRight, ArrowLeft, Mic, MicOff, Volume2, Expand, Minimize, RefreshCcw, Languages } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { translateText, speechToText, textToSpeech } from "@/utils/translation-services";
 
 interface TranslationPanelProps {
   isExpanded: boolean;
@@ -28,24 +30,17 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
   const [sourceLanguage, setSourceLanguage] = useState("en");
   const [targetLanguage, setTargetLanguage] = useState("gir");
   const [isListening, setIsListening] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
   const [isHoveringSwitch, setIsHoveringSwitch] = useState(false);
   const [autoTranslate, setAutoTranslate] = useState(() => {
     return localStorage.getItem('autoTranslate') === 'true';
   });
 
+  // References
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   const isMobile = useIsMobile();
-  
-  const translations = {
-    "irrigation system": "uburyo bwo kuhira",
-    "crop rotation": "guhinduranya ibihingwa",
-    "sustainable farming": "ubuhinzi burambye",
-    "soil fertility": "uburumbuke bw'ubutaka",
-    "harvest season": "igihe cyo gusarura",
-    "drought resistant seeds": "imbuto zihanganira amapfa",
-    "organic fertilizer": "ifumbire mvaruganda",
-    "pest management": "gucunga ibyonnyi",
-  };
 
   useEffect(() => {
     const handleStorageChange = (e) => {
@@ -68,7 +63,7 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
     }
   }, [inputText, autoTranslate]);
 
-  const handleTranslate = () => {
+  const handleTranslate = async () => {
     if (!inputText.trim()) {
       toast.error("Please enter text to translate");
       return;
@@ -81,39 +76,98 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
     
     setIsTranslating(true);
     
-    setTimeout(() => {
-      if (translations[inputText.toLowerCase()]) {
-        setOutputText(translations[inputText.toLowerCase()]);
-        toast.success("Translation complete!");
-      } else {
-        setOutputText("Byahuwe (translated text would appear here)");
-      }
-      setIsTranslating(false);
-    }, 1000);
-  };
-
-  const handleVoiceInput = () => {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      setIsListening(true);
-      toast.info("Listening...");
+    try {
+      const translationResult = await translateText({
+        text: inputText,
+        sourceLang: sourceLanguage,
+        targetLang: targetLanguage
+      });
       
-      setTimeout(() => {
-        setInputText("irrigation system");
-        setIsListening(false);
-        toast.success("Voice input captured!");
-      }, 2000);
-    } else {
-      toast.error("Speech recognition not supported in your browser");
+      setOutputText(translationResult);
+      toast.success("Translation complete!");
+      
+      // Store translation in history
+      const newTranslationHistory = {
+        id: Date.now(),
+        sourceText: inputText,
+        translatedText: translationResult,
+        sourceLang: getLanguageName(sourceLanguage),
+        targetLang: getLanguageName(targetLanguage),
+        date: new Date().toISOString(),
+        fromDashboard: true
+      };
+      
+      // Get existing history
+      const existingHistory = JSON.parse(localStorage.getItem('translationHistory') || '[]');
+      
+      // Add new item and save
+      localStorage.setItem('translationHistory', 
+        JSON.stringify([newTranslationHistory, ...existingHistory])
+      );
+      
+    } catch (error) {
+      console.error("Translation error:", error);
+      toast.error("Translation failed. Please try again.");
+    } finally {
+      setIsTranslating(false);
     }
   };
 
-  const handleTextToSpeech = () => {
+  const handleVoiceInput = async () => {
+    if (isListening) {
+      // Stop listening
+      setIsListening(false);
+      return;
+    }
+    
+    try {
+      setIsListening(true);
+      toast.info(`Listening in ${getLanguageName(sourceLanguage)}...`);
+      
+      const transcription = await speechToText(sourceLanguage);
+      
+      if (transcription) {
+        setInputText(transcription);
+        toast.success("Voice input captured!");
+      } else {
+        toast.error("No speech detected. Try again.");
+      }
+    } catch (error) {
+      console.error("Voice input error:", error);
+      toast.error("Speech recognition failed. Please try again.");
+    } finally {
+      setIsListening(false);
+    }
+  };
+
+  const handleTextToSpeech = async () => {
     if (!outputText) return;
     
-    toast.info("Playing audio...");
-    
-    // Simulate text-to-speech
-    // In a real app, you would use the Web Speech API here
+    try {
+      if (isPlaying && audioRef.current) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+        return;
+      }
+      
+      setIsPlaying(true);
+      toast.info(`Playing audio in ${getLanguageName(targetLanguage)}...`);
+      
+      const audioUrl = await textToSpeech(outputText, targetLanguage);
+      
+      if (audioRef.current) {
+        audioRef.current.src = audioUrl;
+        audioRef.current.play();
+        
+        audioRef.current.onended = () => {
+          setIsPlaying(false);
+        };
+      }
+    } catch (error) {
+      console.error("Text-to-speech error:", error);
+      toast.error("Audio playback failed. Please try again.");
+      setIsPlaying(false);
+    }
   };
 
   const switchLanguages = () => {
@@ -197,8 +251,17 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
               )}
               onClick={handleVoiceInput}
             >
-              <Mic className="h-4 w-4 mr-2" />
-              Voice Input
+              {isListening ? (
+                <>
+                  <MicOff className="h-4 w-4 mr-2" />
+                  Stop Listening
+                </>
+              ) : (
+                <>
+                  <Mic className="h-4 w-4 mr-2" />
+                  Voice Input
+                </>
+              )}
             </Button>
           </div>
         </div>
@@ -270,9 +333,10 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
               variant="outline" 
               onClick={handleTextToSpeech}
               disabled={!outputText}
+              className={isPlaying ? "bg-lingua-100 text-lingua-700" : ""}
             >
               <Volume2 className="h-4 w-4 mr-2" />
-              Listen
+              {isPlaying ? "Stop" : "Listen"}
             </Button>
           </div>
         </div>
@@ -297,6 +361,9 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
           )}
         </Button>
       </div>
+      
+      {/* Hidden audio element for TTS playback */}
+      <audio ref={audioRef} className="hidden" />
     </div>
   );
 };

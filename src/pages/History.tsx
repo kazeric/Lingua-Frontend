@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { Toaster } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -23,34 +23,45 @@ import { Card, CardContent } from "@/components/ui/card";
 const History = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const [historyItems, setHistoryItems] = useState([
-    {
-      id: 1,
-      sourceText: "irrigation system",
-      translatedText: "mfumo wa kumwagiza",
-      sourceLang: "English",
-      targetLang: "Giriama",
-      date: new Date().toISOString(),
-      fromDashboard: true
-    },
-    {
-      id: 2,
-      sourceText: "crop rotation",
-      translatedText: "kugaluza mimea",
-      sourceLang: "English",
-      targetLang: "Giriama",
-      date: new Date().toISOString(),
-      fromDashboard: true
-    }
-  ]);
+  const [historyItems, setHistoryItems] = useState([]);
+
+  // Load translation history from localStorage
+  useEffect(() => {
+    const loadHistory = () => {
+      try {
+        const savedHistory = localStorage.getItem('translationHistory');
+        if (savedHistory) {
+          setHistoryItems(JSON.parse(savedHistory));
+        }
+      } catch (error) {
+        console.error("Error loading translation history:", error);
+      }
+    };
+
+    loadHistory();
+    
+    // Listen for storage changes in case translations are added from another tab/window
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'translationHistory') {
+        loadHistory();
+      }
+    });
+    
+    return () => {
+      window.removeEventListener('storage', () => {});
+    };
+  }, []);
 
   const handleDeleteAll = () => {
+    localStorage.removeItem('translationHistory');
     setHistoryItems([]);
     toast.success("Translation history cleared successfully");
   };
 
   const handleDeleteItem = (id: number) => {
-    setHistoryItems(items => items.filter(item => item.id !== id));
+    const filteredItems = historyItems.filter(item => item.id !== id);
+    localStorage.setItem('translationHistory', JSON.stringify(filteredItems));
+    setHistoryItems(filteredItems);
     toast.success("Translation removed from history");
   };
 

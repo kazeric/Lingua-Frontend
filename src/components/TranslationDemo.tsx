@@ -1,6 +1,6 @@
 
-import React, { useState } from "react";
-import { ArrowRight, MicIcon, RefreshCcwIcon } from "lucide-react";
+import React, { useState, useRef } from "react";
+import { ArrowRight, MicIcon, RefreshCcwIcon, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Link } from "react-router-dom";
@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { translateText, speechToText, textToSpeech } from "@/utils/translation-services";
 
 const agriculturalTerms = [
   "irrigation system",
@@ -23,45 +24,120 @@ const agriculturalTerms = [
   "pest management",
 ];
 
-// Simulated translations
-const translations = {
-  "irrigation system": "mfumo wa kunyunyizia",
-  "crop rotation": "kubadilisha mimea",
-  "sustainable farming": "kilimo endelevu",
-  "soil fertility": "rutuba ya udongo",
-  "harvest season": "majira ya mavuno",
-  "drought resistant seeds": "mbegu zinazostahimili ukame",
-  "organic fertilizer": "mbolea ya asili",
-  "pest management": "kudhibiti wadudu",
-};
+// Giriama translations of agricultural terms
+const giriamaTrans = [
+  "mfumo wa kunyunyizia",
+  "kubadilisha mimea",
+  "kilimo endelevu",
+  "rutuba ya udongo",
+  "majira ya mavuno",
+  "mbegu zinazostahimili ukame",
+  "mbolea ya asili",
+  "kudhibiti wadudu",
+];
 
 const TranslationDemo = () => {
   const [inputText, setInputText] = useState("");
   const [outputText, setOutputText] = useState("");
   const [isTranslating, setIsTranslating] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [sourceLanguage, setSourceLanguage] = useState("en");
   const [targetLanguage, setTargetLanguage] = useState("nyf");
   const [translationDirection, setTranslationDirection] = useState("en-to-nyf");
   
-  const handleSampleClick = (term) => {
+  // Reference for audio element
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  
+  const handleSampleClick = async (term) => {
     setInputText(term);
     
     // Trigger translation automatically when sample is clicked
-    setTimeout(() => {
+    setTimeout(async () => {
       setIsTranslating(true);
-      setTimeout(() => {
+      try {
+        const translatedText = await translateText({
+          text: term,
+          sourceLang: sourceLanguage === "en" ? "en" : "gir",
+          targetLang: targetLanguage === "nyf" ? "gir" : "en"
+        });
+        
+        setOutputText(translatedText);
+      } catch (error) {
+        console.error("Translation error:", error);
+        
+        // Fallback to hardcoded translations if API fails
         if (translationDirection === "en-to-nyf") {
-          setOutputText(translations[term.toLowerCase()]);
+          const index = agriculturalTerms.findIndex(item => 
+            item.toLowerCase() === term.toLowerCase());
+          
+          if (index !== -1) {
+            setOutputText(giriamaTrans[index]);
+          } else {
+            setOutputText("Translation not available");
+          }
         } else {
-          // Reverse lookup for gir-to-en
-          const englishTerm = Object.keys(translations).find(
-            key => translations[key].toLowerCase() === term.toLowerCase()
-          ) || "English translation";
-          setOutputText(englishTerm);
+          const index = giriamaTrans.findIndex(item => 
+            item.toLowerCase() === term.toLowerCase());
+          
+          if (index !== -1) {
+            setOutputText(agriculturalTerms[index]);
+          } else {
+            setOutputText("Translation not available");
+          }
         }
+      } finally {
         setIsTranslating(false);
-      }, 800);
+      }
     }, 100);
+  };
+
+  const handleVoiceInput = async () => {
+    if (isListening) return;
+    
+    try {
+      setIsListening(true);
+      
+      const lang = sourceLanguage === "en" ? "en" : "gir";
+      const transcription = await speechToText(lang);
+      
+      if (transcription) {
+        setInputText(transcription);
+      }
+    } catch (error) {
+      console.error("Voice input error:", error);
+    } finally {
+      setIsListening(false);
+    }
+  };
+
+  const handleTextToSpeech = async () => {
+    if (!outputText || isPlaying) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      }
+      return;
+    }
+    
+    try {
+      setIsPlaying(true);
+      
+      const lang = targetLanguage === "nyf" ? "gir" : "en";
+      const audioUrl = await textToSpeech(outputText, lang);
+      
+      if (audioRef.current) {
+        audioRef.current.src = audioUrl;
+        audioRef.current.play();
+        
+        audioRef.current.onended = () => {
+          setIsPlaying(false);
+        };
+      }
+    } catch (error) {
+      console.error("Text-to-speech error:", error);
+      setIsPlaying(false);
+    }
   };
 
   const switchDirection = () => {
@@ -142,17 +218,37 @@ const TranslationDemo = () => {
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <label className="block text-sm font-medium">Demo text:</label>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    disabled={isListening}
+                    onClick={handleVoiceInput}
+                    className={isListening ? "animate-pulse" : ""}
+                  >
+                    <MicIcon className="h-4 w-4" />
+                  </Button>
                 </div>
                 <Textarea
                   value={inputText}
-                  readOnly
+                  onChange={(e) => setInputText(e.target.value)}
                   placeholder="Select an agricultural term below..."
-                  className="h-40 resize-none bg-muted/30 cursor-not-allowed"
+                  className="h-40 resize-none"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Translation:</label>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-sm font-medium">Translation:</label>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    disabled={!outputText || isTranslating}
+                    onClick={handleTextToSpeech}
+                    className={isPlaying ? "animate-pulse" : ""}
+                  >
+                    <Volume2 className="h-4 w-4" />
+                  </Button>
+                </div>
                 <div className="h-40 bg-muted/30 border border-border rounded-md p-3 overflow-auto">
                   {isTranslating ? (
                     <div className="h-full flex items-center justify-center">
@@ -168,7 +264,7 @@ const TranslationDemo = () => {
             <div className="mt-8">
               <h3 className="text-sm font-medium mb-3">Try with agricultural terms:</h3>
               <div className="flex flex-wrap gap-2">
-                {(translationDirection === "en-to-nyf" ? agriculturalTerms : Object.values(translations)).map((term, index) => (
+                {(translationDirection === "en-to-nyf" ? agriculturalTerms : giriamaTrans).map((term, index) => (
                   <Button
                     key={index}
                     variant="outline"
@@ -192,6 +288,9 @@ const TranslationDemo = () => {
           </div>
         </div>
       </div>
+      
+      {/* Hidden audio element for TTS playback */}
+      <audio ref={audioRef} className="hidden" />
     </section>
   );
 };
