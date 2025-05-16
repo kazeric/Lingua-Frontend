@@ -24,10 +24,13 @@ export const textToSpeech = async (text: string, language: string): Promise<stri
               input: { text },
               voice: {
                 languageCode: 'en-US',
-                ssmlGender: 'NEUTRAL'
+                name: 'en-US-Wavenet-D',
+                ssmlGender: 'FEMALE' 
               },
               audioConfig: {
-                audioEncoding: 'MP3'
+                audioEncoding: 'MP3',
+                speakingRate: 1.0,
+                pitch: 0.0,
               }
             }),
           });
