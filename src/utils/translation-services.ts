@@ -8,25 +8,24 @@ import translationServices, {
   textToSpeech,
   saveToHistory,
   configureModelEndpoints,
+} from './translation';
+
+// Re-export all types using 'export type' syntax
+export type {
   ModelConfig,
   TranslationRequest,
   TranslationResponse,
   SpeechRecognitionSettings,
   HistoryItem,
-} from './translation';
+} from './translation/types';
 
-// Re-export all types and functions
+// Re-export all functions
 export {
   translateText,
   speechToText,
   textToSpeech,
   saveToHistory,
   configureModelEndpoints,
-  ModelConfig,
-  TranslationRequest,
-  TranslationResponse,
-  SpeechRecognitionSettings,
-  HistoryItem,
 };
 
 // Export default object with all main functions

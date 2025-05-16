@@ -20,6 +20,12 @@ declare global {
 }
 
 // Export a default object with all main functions
+import { translateText } from './translation';
+import { speechToText } from './speech-to-text';
+import { textToSpeech } from './text-to-speech';
+import { saveToHistory } from './history';
+import { configureModelEndpoints } from './config';
+
 const translationServices = {
   translateText,
   speechToText,
