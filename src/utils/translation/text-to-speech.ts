@@ -33,9 +33,10 @@ export const textToSpeech = async (text: string, language: string): Promise<stri
                 pitch: 0.0,
               }
             }),
-          });
+          })
           
           const data = await response.json();
+          console.log(data);
           
           if (data.error) {
             throw new Error(data.error.message || 'Google TTS API error');
@@ -59,19 +60,26 @@ export const textToSpeech = async (text: string, language: string): Promise<stri
     // For Giriama, use the custom TTS endpoint
     else if (language === 'gir') {
       try {
-        const response = await fetch(MODEL_CONFIG.tts.gir, {
-          method: 'POST',
+        const response = await fetch(MODEL_CONFIG.tts.gir["url"], {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${MODEL_CONFIG.tts.gir["apiKey"]}`,
           },
-          body: JSON.stringify({ text }),
+          body: JSON.stringify({
+            "input": {
+              "text": text,
+            },
+          }),
         });
         
         if (!response.ok) {
           throw new Error(`Giriama TTS API responded with status: ${response.status}`);
         }
-        
-        const blob = await response.blob();
+
+        const data = await response.json();
+        console.log(data.output.audio_data);
+        const blob = base64ToBlob(data.output.audio_data, "audio/mp3");
         return URL.createObjectURL(blob);
         
       } catch (error) {

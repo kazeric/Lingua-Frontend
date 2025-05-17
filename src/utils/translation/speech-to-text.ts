@@ -87,9 +87,17 @@ export const speechToText = async (language: string): Promise<string> => {
       formData.append('audio', audioBlob);
       
       // Call the Giriama ASR endpoint
-      const response = await fetch(MODEL_CONFIG.asr.gir, {
-        method: 'POST',
-        body: formData,
+      const response = await fetch(MODEL_CONFIG.asr.gir["url"], {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${MODEL_CONFIG.asr.gir["apiKey"]}`,
+        },
+        body: JSON.stringify({
+          "input": {
+            "text": base64Audio,
+          },
+        }),
       });
       
       if (!response.ok) {

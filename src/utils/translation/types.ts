@@ -35,14 +35,14 @@ export interface ModelConfig {
       type: string;
       apiKey: string;
     };
-    gir: string;
+    gir: Record<string, string>;
   };
   tts: {
     en: {
       type: string;
       apiKey: string;
     };
-    gir: string;
+    gir: Record<string, string>;
   };
 }
 
@@ -53,4 +53,6 @@ export interface ModelEndpointConfig {
   giriamaTtsUrl?: string;
   googleAsrKey?: string;
   googleTtsKey?: string;
+  giriamaTtsKey?: string;
+  giriamaAsrKey?: string;
 }
