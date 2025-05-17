@@ -23,7 +23,7 @@ export const speechToText = async (language: string): Promise<string> => {
           
           reader.onloadend = async () => {
             const base64Audio = reader.result?.toString().split(',')[1];
-            
+
             if (!base64Audio) {
               reject(new Error('Failed to convert audio to base64'));
               return;
@@ -67,6 +67,7 @@ export const speechToText = async (language: string): Promise<string> => {
               const webSpeechResult = await useWebSpeechAPI('en-US');
               resolve(webSpeechResult);
             }
+            console.log("Base64 Audio:", base64Audio);
           };
         } catch (error) {
           console.error('Speech recognition error:', error);
@@ -80,39 +81,59 @@ export const speechToText = async (language: string): Promise<string> => {
   } 
   // For Giriama, use the custom ASR endpoint
   else if (language === 'gir') {
-    try {
-      // Record audio
-      const audioBlob = await recordAudio();
-      const formData = new FormData();
-      formData.append('audio', audioBlob);
-      
-      // Call the Giriama ASR endpoint
-      const response = await fetch(MODEL_CONFIG.asr.gir["url"], {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${MODEL_CONFIG.asr.gir["apiKey"]}`,
-        },
-        body: JSON.stringify({
-          "input": {
-            "text": base64Audio,
-          },
-        }),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Giriama ASR API responded with status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      return data.transcript || '';
-      
-    } catch (error) {
-      console.error("Giriama speech recognition error:", error);
-      
-      // For development, return a mock result
-      return "Mimi ni mkulima wa mahindi";
-    }
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Record audio
+        const audioBlob = await recordAudio();
+        // Convert audio blob to base64
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        
+        reader.onloadend = async () => {
+          const base64Audio = reader.result?.toString().split(',')[1];
+
+          if (!base64Audio) {
+            throw new Error('Failed to convert audio to base64');
+            
+          };
+          try {
+            const response = await fetch(MODEL_CONFIG.asr.gir["url"], {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${MODEL_CONFIG.asr.gir["apiKey"]}`,
+              },
+              body: JSON.stringify({
+                input: {
+                  audio_data: base64Audio,
+                },
+              }),
+            });
+            
+            if (!response.ok) {
+              throw new Error(`Giriama ASR API responded with status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            if (data.output.transcription){
+              const transcript = data.output.transcription;
+              resolve(transcript);
+            }
+            else{
+              reject(new Error("No speech detected"));
+            }
+          } catch (error) {
+            console.error("Giriama ASR API error:", error);
+          }
+          
+        }
+        
+      } catch (error) {
+        console.error("Giriama speech recognition error:", error);
+        
+        // For development, return a mock result
+        return "Mimi ni mkulima wa mahindi";
+    }})
   } else {
     throw new Error(`Speech recognition not supported for ${language}`);
   }

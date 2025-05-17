@@ -84,7 +84,7 @@ export const useWebSpeechAPI = (langCode: string): Promise<string> => {
       if (recognition) {
         recognition.stop();
       }
-    }, 10000);
+    }, 600);
   });
 };
 
