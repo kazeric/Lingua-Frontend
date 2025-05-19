@@ -67,7 +67,6 @@ export const speechToText = async (language: string): Promise<string> => {
               const webSpeechResult = await useWebSpeechAPI('en-US');
               resolve(webSpeechResult);
             }
-            console.log("Base64 Audio:", base64Audio);
           };
         } catch (error) {
           console.error('Speech recognition error:', error);

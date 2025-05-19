@@ -335,7 +335,7 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
       <div className="flex justify-center mt-6">
         <Button 
           onClick={handleTranslate} 
-          disabled={isTranslating || !inputText.trim()}
+          disabled={isTranslating}
           className="px-8 bg-lingua-500 hover:bg-lingua-600"
         >
           {isTranslating ? (
