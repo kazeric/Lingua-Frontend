@@ -13,6 +13,15 @@ import {
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { translateText, speechToText, textToSpeech, saveToHistory } from "@/utils/translation-services";
+import {
+  Switch,
+} from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { LanguageSelector } from "./translation/LanguageSelector";
+import { TranslationInput } from "./translation/TranslationInput";
+import { TranslationOutput } from "./translation/TranslationOutput";
+import { TranslationControls } from "./translation/TranslationControls";
+import { LanguageSwitcher } from "./translation/LanguageSwitcher";
 
 interface TranslationPanelProps {
   isExpanded: boolean;
@@ -38,7 +47,6 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
 
   // References
   const audioRef = useRef<HTMLAudioElement | null>(null);
-
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -63,7 +71,7 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
   }, [inputText, autoTranslate]);
 
   const handleTranslate = async () => {
-    if (!inputText.trim()) {
+    if (!inputText || typeof inputText !== 'string' || !inputText.trim()) {
       toast.error("Please enter text to translate");
       return;
     }
@@ -114,6 +122,7 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
       setIsListening(true);
       toast.info(`Listening in ${getLanguageName(sourceLanguage)}...`);
       
+      // Pass only the language parameter as required
       const transcription = await speechToText(sourceLanguage);
       
       if (transcription) {
@@ -166,12 +175,18 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
       return;
     }
 
+    // Save current state before switching
+    const tempSourceLang = sourceLanguage;
+    const tempTargetLang = targetLanguage;
+    const tempInputText = inputText;
+    const tempOutputText = outputText;
+
+    // Set the new state
+    setSourceLanguage(tempTargetLang);
+    setTargetLanguage(tempSourceLang);
+    setInputText(tempOutputText);
+    setOutputText(tempInputText);
     setIsFlipped(!isFlipped);
-    const temp = sourceLanguage;
-    setSourceLanguage(targetLanguage);
-    setTargetLanguage(temp);
-    setInputText(outputText);
-    setOutputText(inputText);
   };
 
   const getLanguageName = (code) => {
@@ -204,153 +219,44 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 flex-1 relative">
-        <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden 
-                     transition-all duration-300 hover:shadow-md flex flex-col">
-          <div className="p-4 border-b border-border flex items-center justify-between">
-            <div className="w-full">
-              <Select value={sourceLanguage} onValueChange={setSourceLanguage}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select language">{getLanguageName(sourceLanguage)}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="gir">Giriama</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          
-          <div className="flex-1 p-4">
-            <Textarea
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              placeholder="Type or speak to translate..."
-              className="h-full min-h-[200px] resize-none"
-            />
-          </div>
-          
-          <div className="p-4 border-t border-border flex justify-between">
-            <Button variant="outline" onClick={() => setInputText("")}>
-              Clear
-            </Button>
-            <Button 
-              variant="outline" 
-              className={cn(
-                "transition-all", 
-                isListening && "animate-pulse bg-lingua-100 text-lingua-700"
-              )}
-              onClick={handleVoiceInput}
-            >
-              {isListening ? (
-                <>
-                  <MicOff className="h-4 w-4 mr-2" />
-                  Stop Listening
-                </>
-              ) : (
-                <>
-                  <Mic className="h-4 w-4 mr-2" />
-                  Voice Input
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
+        <TranslationInput 
+          sourceLanguage={sourceLanguage}
+          setSourceLanguage={setSourceLanguage}
+          inputText={inputText}
+          setInputText={setInputText}
+          isListening={isListening}
+          handleVoiceInput={handleVoiceInput}
+          getLanguageName={getLanguageName}
+        />
 
-        <div className="hidden md:flex items-center justify-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-          <Button 
-            variant="outline" 
-            size="icon" 
-            className="rounded-full h-12 w-12 bg-card border border-border shadow-md transition-transform"
-            onClick={switchLanguages}
-            onMouseEnter={() => setIsHoveringSwitch(true)}
-            onMouseLeave={() => setIsHoveringSwitch(false)}
-          >
-            <div className={cn(
-              "transition-all duration-300",
-              isHoveringSwitch && "rotate-180" 
-            )}>
-              {isFlipped ? <ArrowLeft className="h-5 w-5" /> : <ArrowRight className="h-5 w-5" />}
-            </div>
-          </Button>
-        </div>
+        <LanguageSwitcher 
+          isFlipped={isFlipped}
+          isHoveringSwitch={isHoveringSwitch}
+          setIsHoveringSwitch={setIsHoveringSwitch}
+          switchLanguages={switchLanguages}
+          isMobile={isMobile}
+        />
 
-        <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden 
-                     transition-all duration-300 hover:shadow-md flex flex-col">
-          <div className="p-4 border-b border-border flex items-center justify-between">
-            <div className="w-full">
-              <Select value={targetLanguage} onValueChange={setTargetLanguage}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select language">{getLanguageName(targetLanguage)}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="gir">Giriama</SelectItem>
-                  <SelectItem value="en">English</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          
-          <div className="flex-1 p-4 flex flex-col">
-            {isTranslating ? (
-              <div className="flex-1 flex items-center justify-center">
-                <RefreshCcw className="h-8 w-8 text-muted-foreground animate-spin" />
-              </div>
-            ) : (
-              <div className="flex-1 bg-muted/30 rounded-md p-4 h-full min-h-[200px]">
-                {outputText ? (
-                  <p>{outputText}</p>
-                ) : (
-                  <p className="text-muted-foreground">Translation will appear here...</p>
-                )}
-              </div>
-            )}
-          </div>
-          
-          <div className="p-4 border-t border-border flex justify-between">
-            <div>
-              <Button 
-                variant="outline" 
-                className="md:hidden mr-2"
-                onClick={switchLanguages}
-              >
-                <div className="flex items-center">
-                  <ArrowRight className="h-4 w-4 mr-2" />
-                  Switch
-                </div>
-              </Button>
-            </div>
-            <Button 
-              variant="outline" 
-              onClick={handleTextToSpeech}
-              disabled={!outputText}
-              className={isPlaying ? "bg-lingua-100 text-lingua-700" : ""}
-            >
-              <Volume2 className="h-4 w-4 mr-2" />
-              {isPlaying ? "Stop" : "Listen"}
-            </Button>
-          </div>
-        </div>
+        <TranslationOutput 
+          targetLanguage={targetLanguage}
+          setTargetLanguage={setTargetLanguage}
+          outputText={outputText}
+          isTranslating={isTranslating}
+          isPlaying={isPlaying}
+          handleTextToSpeech={handleTextToSpeech}
+          switchLanguages={switchLanguages}
+          getLanguageName={getLanguageName}
+          isMobile={isMobile}
+        />
       </div>
 
-      <div className="flex justify-center mt-6">
-        <Button 
-          onClick={handleTranslate} 
-          disabled={isTranslating}
-          className="px-8 bg-lingua-500 hover:bg-lingua-600"
-        >
-          {isTranslating ? (
-            <>
-              <RefreshCcw className="h-4 w-4 mr-2 animate-spin" />
-              Translating...
-            </>
-          ) : (
-            <>
-              <Languages className="h-4 w-4 mr-2" />
-              Translate
-            </>
-          )}
-        </Button>
-      </div>
+
+      <TranslationControls 
+        handleTranslate={handleTranslate}
+        isTranslating={isTranslating}
+        hasInputText={!!(inputText && typeof inputText === 'string' && inputText.trim())}
+      />
+
       
       {/* Hidden audio element for TTS playback */}
       <audio ref={audioRef} className="hidden" />
