@@ -29,20 +29,22 @@ export interface HistoryItem {
 
 // Configuration types for model endpoints
 export interface ModelConfig {
-  translation: Record<string, string>;
+  translation: {
+    urls:Record<string, string>;
+    keys:Record<string, string>;}
   asr: {
     en: {
       type: string;
       apiKey: string;
     };
-    gir: string;
+    gir: Record<string, string>;
   };
   tts: {
     en: {
       type: string;
       apiKey: string;
     };
-    gir: string;
+    gir: Record<string, string>;
   };
 }
 
@@ -53,4 +55,8 @@ export interface ModelEndpointConfig {
   giriamaTtsUrl?: string;
   googleAsrKey?: string;
   googleTtsKey?: string;
+  giriamaTtsKey?: string;
+  giriamaAsrKey?: string;
+  enToGiriamaKey?: string;
+  giriamaToEnKey?: string;
 }

@@ -12,11 +12,22 @@ export const translateText = async ({ text, sourceLang, targetLang }: Translatio
     // Determine which translation model to use
     const translationDirection = `${sourceLang}-${targetLang}`;
     const reverseDirection = `${targetLang}-${sourceLang}`;
-    let endpoint = MODEL_CONFIG.translation[translationDirection];
+    let endpoint = MODEL_CONFIG.translation.urls[translationDirection];
+    let api_key = MODEL_CONFIG.translation.keys[translationDirection];
+    let target_token= targetLang;
+    let source_token= sourceLang;
+
+    // make sure language tokens are connistent with the model's
+    if(source_token === "gir"){
+      source_token = "sw";
+    }else if(target_token === "gir"){
+      target_token = "sw";
+    }
     
-    if (!endpoint && MODEL_CONFIG.translation[reverseDirection]) {
+    if (!endpoint && MODEL_CONFIG.translation.urls[reverseDirection]) {
       console.log("Using reverse translation model with switched languages");
-      endpoint = MODEL_CONFIG.translation[reverseDirection];
+      endpoint = MODEL_CONFIG.translation.urls[reverseDirection];
+      api_key = MODEL_CONFIG.translation.keys[reverseDirection];
     }
 
     if (!endpoint) {
@@ -26,14 +37,19 @@ export const translateText = async ({ text, sourceLang, targetLang }: Translatio
     // Try to make an API call to the translation endpoint
     try {
       const response = await fetch(endpoint, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${api_key}`,
         },
         body: JSON.stringify({
-          text,
-          sourceLang,
-          targetLang
+          input: {
+            text: text,
+            source_lang: source_token,
+            target_lang: target_token,
+            max_length: 150,
+            num_beams: 5,
+          },
         }),
       });
       
@@ -42,7 +58,7 @@ export const translateText = async ({ text, sourceLang, targetLang }: Translatio
       }
       
       const data = await response.json();
-      return data.translatedText;
+      return data.output.translations;
       
     } catch (apiError) {
       console.warn("API call failed, using fallback translations", apiError);
