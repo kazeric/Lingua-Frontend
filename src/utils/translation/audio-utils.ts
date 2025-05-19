@@ -84,7 +84,9 @@ export const useWebSpeechAPI = (langCode: string): Promise<string> => {
       if (recognition) {
         recognition.stop();
       }
-    }, 600);
+
+    }, 10000); // Increased to 10 seconds for better user experience
+
   });
 };
 
