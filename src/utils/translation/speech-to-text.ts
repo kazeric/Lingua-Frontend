@@ -6,7 +6,7 @@ import { recordAudio, useWebSpeechAPI } from './audio-utils';
  */
 export const speechToText = async (language: string): Promise<string> => {
   console.log(`Starting speech recognition for ${language}`);
-  
+
   try {
     let transcription = "";
     
@@ -24,6 +24,7 @@ export const speechToText = async (language: string): Promise<string> => {
         const base64Audio = await new Promise<string>((resolve, reject) => {
           reader.onloadend = () => {
             const base64Audio = reader.result?.toString().split(',')[1];
+
             if (!base64Audio) {
               reject(new Error('Failed to convert audio to base64'));
               return;
@@ -69,6 +70,7 @@ export const speechToText = async (language: string): Promise<string> => {
           // Fall back to Web Speech API
           transcription = await useWebSpeechAPI('en-US');
         }
+
       } else {
         // Fall back to Web Speech API
         transcription = await useWebSpeechAPI('en-US');
@@ -136,5 +138,6 @@ export const speechToText = async (language: string): Promise<string> => {
   } catch (error) {
     console.error('Speech recognition error:', error);
     throw error;
+
   }
 };

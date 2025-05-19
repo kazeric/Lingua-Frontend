@@ -250,11 +250,13 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
         />
       </div>
 
+
       <TranslationControls 
         handleTranslate={handleTranslate}
         isTranslating={isTranslating}
         hasInputText={!!(inputText && typeof inputText === 'string' && inputText.trim())}
       />
+
       
       {/* Hidden audio element for TTS playback */}
       <audio ref={audioRef} className="hidden" />

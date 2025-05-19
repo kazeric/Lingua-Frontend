@@ -38,6 +38,7 @@ export const textToSpeech = async (text: string, language: string): Promise<stri
           const data = await response.json();
           console.log(data);
           
+          
           if (data.error) {
             throw new Error(data.error.message || 'Google TTS API error');
           }
@@ -78,7 +79,7 @@ export const textToSpeech = async (text: string, language: string): Promise<stri
         }
 
         const data = await response.json();
-        console.log(data.output.audio_data);
+
         const blob = base64ToBlob(data.output.audio_data, "audio/mp3");
         return URL.createObjectURL(blob);
         

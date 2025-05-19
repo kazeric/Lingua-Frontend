@@ -4,18 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { 
+import {
   translateText,
   speechToText,
   textToSpeech,
-  saveToHistory
+  saveToHistory,
 } from "@/utils/translation";
 
 const agriculturalTerms = [
@@ -50,25 +50,25 @@ const TranslationDemo = () => {
   const [sourceLanguage, setSourceLanguage] = useState("en");
   const [targetLanguage, setTargetLanguage] = useState("nyf");
   const [translationDirection, setTranslationDirection] = useState("en-to-nyf");
-  
+
   // Reference for audio element
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  
+
   const handleSampleClick = async (term) => {
     setInputText(term);
-    
+
     // Trigger translation automatically when sample is clicked
     setTimeout(async () => {
       setIsTranslating(true);
       try {
         const translatedText = await translateText({
           text: term,
-          sourceLang: sourceLanguage === "en" ? "en" : "gir",
-          targetLang: targetLanguage === "nyf" ? "gir" : "en"
+          sourceLang: sourceLanguage === "en" ? "en" : "sw",
+          targetLang: targetLanguage === "nyf" ? "sw" : "en",
         });
-        
+
         setOutputText(translatedText);
-        
+
         // Save to history as a demo translation
         saveToHistory(
           term,
@@ -76,25 +76,27 @@ const TranslationDemo = () => {
           sourceLanguage === "en" ? "English" : "Giriama",
           targetLanguage === "nyf" ? "Giriama" : "English",
           false, // fromDashboard is false
-          true   // isDemo is true
+          true // isDemo is true
         );
       } catch (error) {
         console.error("Translation error:", error);
-        
+
         // Fallback to hardcoded translations if API fails
         if (translationDirection === "en-to-nyf") {
-          const index = agriculturalTerms.findIndex(item => 
-            item.toLowerCase() === term.toLowerCase());
-          
+          const index = agriculturalTerms.findIndex(
+            (item) => item.toLowerCase() === term.toLowerCase()
+          );
+
           if (index !== -1) {
             setOutputText(giriamaTrans[index]);
           } else {
             setOutputText("Translation not available");
           }
         } else {
-          const index = giriamaTrans.findIndex(item => 
-            item.toLowerCase() === term.toLowerCase());
-          
+          const index = giriamaTrans.findIndex(
+            (item) => item.toLowerCase() === term.toLowerCase()
+          );
+
           if (index !== -1) {
             setOutputText(agriculturalTerms[index]);
           } else {
@@ -108,24 +110,8 @@ const TranslationDemo = () => {
   };
 
   const handleVoiceInput = async () => {
-    if (isListening) return;
-    
-    try {
-      setIsListening(true);
-      
-      const lang = sourceLanguage === "en" ? "en" : "gir";
-      const transcription = await speechToText(lang);
-      
-      if (transcription) {
-        setInputText(transcription);
-        toast.success("Voice input captured!");
-      }
-    } catch (error) {
-      console.error("Voice input error:", error);
-      toast.error("Speech recognition failed. Please try again.");
-    } finally {
-      setIsListening(false);
-    }
+    // Voice input is disabled in demo mode
+    toast.info("Voice input is available in the full translation tool");
   };
 
   const handleTextToSpeech = async () => {
@@ -136,17 +122,17 @@ const TranslationDemo = () => {
       }
       return;
     }
-    
+
     try {
       setIsPlaying(true);
-      
-      const lang = targetLanguage === "nyf" ? "gir" : "en";
+
+      const lang = targetLanguage === "nyf" ? "sw" : "en";
       const audioUrl = await textToSpeech(outputText, lang);
-      
+
       if (audioRef.current) {
         audioRef.current.src = audioUrl;
         audioRef.current.play();
-        
+
         audioRef.current.onended = () => {
           setIsPlaying(false);
         };
@@ -190,7 +176,8 @@ const TranslationDemo = () => {
             Try Our Agricultural Translation
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Experience the specialized translation capabilities designed for agricultural terminology.
+            Experience the specialized translation capabilities designed for
+            agricultural terminology.
           </p>
         </div>
 
@@ -199,7 +186,11 @@ const TranslationDemo = () => {
             <div className="flex flex-col md:flex-row gap-6 mb-6">
               <div className="flex-1">
                 <label className="block text-sm font-medium mb-2">From:</label>
-                <Select defaultValue={sourceLanguage} value={sourceLanguage} onValueChange={setSourceLanguage}>
+                <Select
+                  defaultValue={sourceLanguage}
+                  value={sourceLanguage}
+                  onValueChange={setSourceLanguage}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select language" />
                   </SelectTrigger>
@@ -210,7 +201,7 @@ const TranslationDemo = () => {
                 </Select>
               </div>
               <div className="hidden md:flex items-center justify-center">
-                <button 
+                <button
                   className="p-2 rounded-full bg-lingua-50 hover:bg-lingua-100 dark:bg-lingua-900/20 dark:hover:bg-lingua-900/40 transition-all"
                   onClick={switchDirection}
                   aria-label="Switch translation direction"
@@ -220,7 +211,11 @@ const TranslationDemo = () => {
               </div>
               <div className="flex-1">
                 <label className="block text-sm font-medium mb-2">To:</label>
-                <Select defaultValue={targetLanguage} value={targetLanguage} onValueChange={setTargetLanguage}>
+                <Select
+                  defaultValue={targetLanguage}
+                  value={targetLanguage}
+                  onValueChange={setTargetLanguage}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select language" />
                   </SelectTrigger>
@@ -235,31 +230,35 @@ const TranslationDemo = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <label className="block text-sm font-medium">Demo text:</label>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    disabled={isListening}
-                    onClick={handleVoiceInput}
-                    className={isListening ? "animate-pulse" : ""}
+                  <label className="block text-sm font-medium">
+                    Demo text:
+                  </label>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    disabled={true}
+                    className="text-gray-400 cursor-not-allowed"
                   >
-                    <MicIcon className="h-4 w-4" />
+                    <MicIcon className="h-4 w-4 opacity-50" />
                   </Button>
                 </div>
                 <Textarea
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   placeholder="Select an agricultural term below..."
-                  className="h-40 resize-none"
+                  className="h-40 resize-none bg-muted/20"
+                  disabled={true}
                 />
               </div>
 
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <label className="block text-sm font-medium">Translation:</label>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <label className="block text-sm font-medium">
+                    Translation:
+                  </label>
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     disabled={!outputText || isTranslating}
                     onClick={handleTextToSpeech}
                     className={isPlaying ? "animate-pulse" : ""}
@@ -280,9 +279,14 @@ const TranslationDemo = () => {
             </div>
 
             <div className="mt-8">
-              <h3 className="text-sm font-medium mb-3">Try with agricultural terms:</h3>
+              <h3 className="text-sm font-medium mb-3">
+                Try with agricultural terms:
+              </h3>
               <div className="flex flex-wrap gap-2">
-                {(translationDirection === "en-to-nyf" ? agriculturalTerms : giriamaTrans).map((term, index) => (
+                {(translationDirection === "en-to-nyf"
+                  ? agriculturalTerms
+                  : giriamaTrans
+                ).map((term, index) => (
                   <Button
                     key={index}
                     variant="outline"
@@ -295,7 +299,7 @@ const TranslationDemo = () => {
                 ))}
               </div>
             </div>
-            
+
             <div className="mt-6 text-center">
               <Link to="/dashboard" className="inline-block">
                 <Button className="bg-lingua-500 hover:bg-lingua-600 text-white px-6">
@@ -306,7 +310,7 @@ const TranslationDemo = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Hidden audio element for TTS playback */}
       <audio ref={audioRef} className="hidden" />
     </section>
