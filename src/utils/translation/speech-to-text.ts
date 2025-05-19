@@ -10,6 +10,7 @@ export const speechToText = async (language: string): Promise<string> => {
   
   // Use Google's Web Speech API or Google Cloud Speech-to-Text API for English
   if (language === 'en') {
+    console.log(MODEL_CONFIG.asr.en.apiKey.length);
     // If Google Cloud API key is available and valid, use Google Cloud Speech-to-Text
     if (MODEL_CONFIG.asr.en?.apiKey && MODEL_CONFIG.asr.en.apiKey.length > 10) {
       return new Promise(async (resolve, reject) => {
